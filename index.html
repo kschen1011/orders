@@ -493,7 +493,7 @@ function subscribeOrders(){
   if(S.windowFrom && from >= S.windowFrom) return;
   S.windowFrom = from;
   S.offOrders?.();
-  S.offOrders = DB.watch('orders', docs => { S.orders = docs; S.loaded.orders = true; render(); }, { from });
+  S.offOrders = DB.watch('orders', docs => { S.orders = docs.filter(d => !d.deleted); S.loaded.orders = true; render(); }, { from });
 }
 
 /* ============================================================
@@ -792,7 +792,7 @@ function openOrderForm(o){
         <div class="f" style="margin-top:10px"><textarea data-k="note" placeholder="備註">${esc(d.note)}</textarea></div>
         ${d.log?.length ? `<details><summary>修改紀錄（${d.log.length}）</summary>${d.log.slice().reverse().map(x => `<div class="t2" style="font-size:13px;color:var(--muted)">${fmtTime(x.at)} ${esc(x.by)}：${esc(x.act)}</div>`).join('')}</details>` : ''}</div>
       ${d._err ? `<div class="err">${esc(d._err)}</div>` : ''}`;
-  }, `<button class="btn" data-act="close">取消</button><button class="btn pri" data-act="save-order">儲存</button>`);
+  }, `${o ? `<button class="btn danger" data-act="del-order">刪除訂單</button>` : ''}<button class="btn" data-act="close">關閉</button><button class="btn pri" data-act="save-order">儲存</button>`);
 }
 function setPath(obj, path, val){ const ks = path.split('.'); let o = obj; ks.slice(0, -1).forEach(k => o = o[k] ||= {}); o[ks.at(-1)] = val; }
 
@@ -971,7 +971,7 @@ function importBody(){
       const warn = !r.exists && (!r.shipDate || r.dateConflict || r.items.some(it => !imp.maps[it.key]));
       const bg = r.exists ? 'background:#f1efec;color:#999' : warn ? 'background:var(--amber-bg);border-color:#ecd28c' : '';
       return `<div class="card" style="${bg}">
-        <div class="l1" style="display:flex;justify-content:space-between;gap:8px"><b>${esc(r.name)}　${fmtPhone(r.phone)}</b><span style="font-size:13px">${esc(r.cyberId)}${r.exists ? '・已匯入過' : ''}</span></div>
+        <div class="l1" style="display:flex;justify-content:space-between;gap:8px"><b>${esc(r.name)}　${fmtPhone(r.phone)}</b><span style="font-size:13px">${esc(r.cyberId)}${r.wasDeleted ? '・已刪除，不再匯入' : r.exists ? '・已匯入過' : ''}</span></div>
         <div class="badges"><span class="b">${r.method === 'delivery' ? '宅配' : '自取'}</span>${r.am ? '<span class="b amber">早上取貨</span>' : ''}
           ${r.paid ? '<span class="b ok">已付款</span>' : '<span class="b red">未付款</span>'}${r.taxId ? `<span class="b amber">收據 ${r.taxId}</span>` : ''}</div>
         <div style="margin-top:6px;font-size:14.5px">${r.items.map(it => `${esc(it.key)} × ${it.qty}${imp.maps[it.key] ? '' : ' <b style="color:var(--amber)">（未對應）</b>'}`).join('<br>')}</div>
@@ -991,7 +991,7 @@ async function handleImportFile(file){
     const parsed = parseCyber(rows);
     if(!parsed.length) throw new Error('檔案中沒有訂單資料');
     const exists = await Promise.all(parsed.map(r => DB.get('orders', r.docId).catch(() => null)));
-    parsed.forEach((r, i) => { r.exists = !!exists[i]; if(r.exists) r.shipDate = exists[i].shipDate; });
+    parsed.forEach((r, i) => { r.exists = !!exists[i]; r.wasDeleted = !!exists[i]?.deleted; if(r.exists) r.shipDate = exists[i].shipDate; });
     imp.rows = parsed;
     imp.maps = {};
     parsed.flatMap(r => r.items).forEach(i => { const m = S.mappings.find(x => x.key === i.key); if(m) imp.maps[i.key] = m; });
@@ -1053,7 +1053,7 @@ function exportExcel(){
   XLSX.writeFile(wb, `半吊子訂單_${S.range.from}_${S.range.to}.xlsx`);
 }
 async function showHistory(phone){
-  const list = (await DB.whereEq('orders', 'phone', phone)).sort((a, b) => b.shipDate.localeCompare(a.shipDate));
+  const list = (await DB.whereEq('orders', 'phone', phone)).filter(d => !d.deleted).sort((a, b) => b.shipDate.localeCompare(a.shipDate));
   openModal(`歷史訂單 ${fmtPhone(phone)}`, () => list.length ? `<p class="sum">共 ${list.length} 筆</p>` + list.map(o => orderCard(o, { showDate: true })).join('') : '<div class="empty">沒有紀錄</div>');
 }
 
@@ -1089,6 +1089,17 @@ document.addEventListener('click', async e => {
       return rerenderModal();
     case 'line-del': draft.lines.splice(+v, 1); return rerenderModal();
     case 'save-order': return saveOrder();
+    case 'del-order': {
+      if(!confirmInline(el, '再按一次確認刪除')) return;
+      const d = draft;
+      try{
+        // 官網訂單留下刪除標記，避免重新匯入時又被加回來
+        if(d.cyberId) await DB.put('orders', d.id, { deleted: true, cyberId: d.cyberId, shipDate: d.shipDate, name: d.name, deletedBy: S.me, deletedAt: Date.now() });
+        else await DB.remove('orders', d.id);
+        closeModal(); toast('已刪除訂單');
+      }catch(err){ toast('刪除失敗：' + (err.code || err.message)); }
+      return;
+    }
     case 'pay-m': payDraft.method = v; return rerenderModal();
     case 'pay-skip': { const pid = payDraft.id; closeModal(); return changeStatus(pid, 'done', { _confirmed: true }); }
     case 'pay-ok': {
