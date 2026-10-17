@@ -1,0 +1,1206 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6b5443">
+<title>半吊子 訂單系統</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#f6f1ea; --card:#fff; --ink:#3d3229; --muted:#8a7d70; --line:#e6ddd2;
+  --brown:#6b5443; --brown-2:#8c705b; --soft:#efe7dc;
+  --reg-bg:#e6f2e4; --reg-bd:#5f9b62;
+  --cus-bg:#efe6f7; --cus-bd:#8a6bb8;
+  --pr-bg:#fce8d4;  --pr-bd:#d98a3d;
+  --red:#d14343; --red-bg:#fde8e8; --blue:#3a6ea5; --amber:#b7791f; --amber-bg:#fff4d6;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:16px;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+#app{max-width:760px;margin:0 auto;min-height:100vh;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+header.top{position:sticky;top:0;z-index:20;background:var(--brown);color:#fff;padding:10px 16px calc(10px);display:flex;align-items:center;gap:10px}
+header.top h1{font-size:18px;margin:0;flex:1;letter-spacing:.05em}
+header.top .me{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:999px;padding:4px 12px;font-size:14px}
+.demo-flag{background:#f5c542;color:#3d3229;font-size:12px;border-radius:6px;padding:2px 6px}
+.range{background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;position:sticky;top:48px;z-index:15}
+.range .row{display:flex;align-items:center;gap:6px}
+.range input[type=date]{flex:1;min-width:0;padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:14px}
+.chip.on{background:var(--brown);border-color:var(--brown);color:#fff}
+main{padding:12px 16px}
+.sum{color:var(--muted);font-size:14px;margin:4px 0 12px}
+.sum b{color:var(--ink)}
+h2.sec{font-size:15px;color:var(--brown);margin:18px 0 8px;letter-spacing:.05em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi .n{font-size:30px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .u{font-size:14px;color:var(--muted);margin-left:2px;font-weight:400}
+.kpi .name{font-size:15px;margin-bottom:4px}
+.kpi .sub{font-size:13px;color:var(--amber);margin-top:4px}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.pk-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.pk-head b{font-size:17px}
+.pk-head span{color:var(--muted);font-size:14px}
+.pk-row{display:flex;justify-content:space-between;padding:7px 0;border-top:1px dashed var(--line);font-size:16px}
+.pk-row .c{font-weight:700;font-variant-numeric:tabular-nums}
+.totals{display:flex;flex-wrap:wrap;gap:6px}
+.totals span{background:var(--soft);border-radius:8px;padding:4px 10px;font-size:14px}
+.totals b{font-variant-numeric:tabular-nums}
+/* order cards */
+.oc{border-radius:12px;padding:12px 14px;margin-bottom:10px;border:1px solid;border-left-width:6px}
+.t-regular{background:var(--reg-bg);border-color:var(--reg-bd)}
+.t-custom{background:var(--cus-bg);border-color:var(--cus-bd)}
+.t-pr{background:var(--pr-bg);border-color:var(--pr-bd)}
+.oc.st-done,.oc.st-cancel{background:#f1efec;border-color:#c9c2b9;color:#7d746b}
+.oc .l1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.oc .nm{font-size:18px;font-weight:700}
+.oc .ph{color:var(--blue);text-decoration:none;font-variant-numeric:tabular-nums}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.b{font-size:12.5px;border-radius:6px;padding:2px 7px;background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.08);white-space:nowrap}
+.b.red{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
+.b.ok{background:#fff;color:#2f6b33;border-color:#a9cfa9}
+.b.amber{background:var(--amber-bg);color:var(--amber);border-color:#ecd28c;font-weight:700}
+.b.type{background:rgba(0,0,0,.06);border:0}
+.b.st{background:var(--ink);color:#fff;border:0}
+.items{margin:8px 0 0;padding:8px 10px;background:rgba(255,255,255,.7);border-radius:8px;font-size:15px}
+.items .bx{font-weight:700}
+.items .sub{color:var(--muted);font-size:13.5px;padding-left:12px}
+.need{margin-top:6px;font-size:14.5px;background:rgba(255,255,255,.7);border-radius:8px;padding:6px 10px}
+.need b{color:var(--brown)}
+.meta{font-size:12px;color:var(--muted);margin-top:6px}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;font-size:15px}
+.btn.pri{background:var(--brown);border-color:var(--brown);color:#fff}
+.btn.danger{color:var(--red);border-color:#f0c4c4}
+.btn.sm{padding:5px 10px;font-size:14px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45}
+.alert{border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:14.5px}
+.alert.amber{background:var(--amber-bg);border:1px solid #ecd28c}
+.alert.red{background:var(--red-bg);border:1px solid #f0c4c4}
+.alert b{display:block;margin-bottom:4px}
+.alert ul{margin:0;padding-left:18px}
+.dayh{font-weight:700;color:var(--brown);margin:16px 0 8px;display:flex;justify-content:space-between}
+.dayh span{font-weight:400;color:var(--muted);font-size:14px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.search{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-bottom:10px}
+/* tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs .in{display:flex;width:100%;max-width:760px}
+nav.tabs button{flex:1;border:0;background:none;padding:9px 0 10px;font-size:13px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button .ic{font-size:19px;line-height:1}
+nav.tabs button.on{color:var(--brown);font-weight:700}
+/* modal */
+#modal{position:fixed;inset:0;z-index:50;display:none;background:rgba(40,30,20,.45)}
+#modal.show{display:block}
+#modal .sheet{position:absolute;inset:0;margin:0 auto;max-width:760px;background:var(--bg);display:flex;flex-direction:column}
+@media(min-width:780px){#modal .sheet{inset:24px auto;left:0;right:0;border-radius:14px;overflow:hidden}}
+#modal .mh{background:var(--brown);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px}
+#modal .mh h3{margin:0;font-size:17px;flex:1}
+#modal .mh button{background:none;border:0;color:#fff;font-size:22px;line-height:1}
+#modal .mb{flex:1;overflow:auto;padding:14px 16px 24px}
+#modal .mf{background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px}
+#modal .mf .btn{flex:1}
+.f{margin-bottom:12px}
+.f>label{display:block;font-size:13.5px;color:var(--muted);margin-bottom:4px}
+.f input[type=text],.f input[type=tel],.f input[type=number],.f input[type=date],.f input[type=password],.f select,.f textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.f textarea{min-height:64px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 12px;font-size:15px}
+.seg button.on{background:var(--brown);color:#fff;border-color:var(--brown)}
+.seg button.on.t-regular{background:var(--reg-bd);border-color:var(--reg-bd)}
+.seg button.on.t-custom{background:var(--cus-bd);border-color:var(--cus-bd)}
+.seg button.on.t-pr{background:var(--pr-bd);border-color:var(--pr-bd)}
+.box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.box>.bt{font-weight:700;color:var(--brown);margin-bottom:8px;font-size:15px}
+.line{border:1px solid var(--line);border-radius:10px;padding:8px;margin-bottom:8px;background:var(--bg)}
+.line .lr{display:grid;grid-template-columns:1fr 1fr 70px 36px;gap:6px;align-items:center}
+.line .lr.bx{grid-template-columns:1fr 70px 36px}
+.line select,.line input{width:100%;padding:7px 6px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:15px}
+.line .x{border:0;background:none;color:var(--red);font-size:20px}
+.line .hint{font-size:13px;color:var(--muted);margin-top:4px}
+.chk{display:flex;align-items:center;gap:8px;font-size:15px;margin-bottom:6px}
+.chk input{width:20px;height:20px}
+.err{color:var(--red);font-size:14px;margin:6px 0}
+table.t{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+table.t th{color:var(--muted);font-weight:400;font-size:13px}
+tr.warn td{background:var(--amber-bg)}
+tr.skip td{color:#aaa}
+.set-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+.set-row:first-of-type{border-top:0}
+.set-row .t1{font-size:15px}
+.set-row .t2{font-size:13px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:4px;background:var(--soft);border-radius:999px;padding:4px 6px 4px 12px;margin:0 6px 6px 0;font-size:15px}
+.tag button{border:0;background:none;color:var(--muted);font-size:16px}
+.inl{display:flex;gap:6px}
+.inl input{flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:9px}
+.login{max-width:360px;margin:12vh auto 0;padding:24px}
+.login h1{text-align:center;color:var(--brown);font-size:22px}
+.login input{width:100%;padding:12px;font-size:22px;text-align:center;letter-spacing:.4em;border:1px solid var(--line);border-radius:12px;margin:12px 0}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.who button{padding:16px;font-size:20px;border-radius:12px;border:1px solid var(--line);background:#fff}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:15px;z-index:60;display:none;max-width:90vw}
+details summary{cursor:pointer;color:var(--brown);font-size:14px}
+</style>
+</head>
+<body>
+<div id="app"><div class="empty">載入中…</div></div>
+<div id="modal"></div>
+<div id="toast"></div>
+
+<script type="module">
+/* ============================================================
+   半吊子廚房 訂單系統  v1.0
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCO4o2C3ooVYMnYa9igM-Cs8Jh_Ogxn9Ec",
+  authDomain: "half-kitchen-orders.firebaseapp.com",
+  projectId: "half-kitchen-orders",
+  storageBucket: "half-kitchen-orders.firebasestorage.app",
+  messagingSenderId: "24673149454",
+  appId: "1:24673149454:web:ad49a1215a97def942d25f"
+};
+const FB_VER = '10.12.2';
+const DEMO = new URLSearchParams(location.search).has('demo');
+
+/* ---------- helpers ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch{ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
+};
+const clean = o => JSON.parse(JSON.stringify(o));
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseYmd = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const today = () => ymd(new Date());
+const addDays = (s, n) => { const d = parseYmd(s); d.setDate(d.getDate()+n); return ymd(d); };
+const WD = '日一二三四五六';
+const fmtDate = s => { if(!s) return ''; const d = parseYmd(s); return `${d.getMonth()+1}/${d.getDate()}（${WD[d.getDay()]}）`; };
+const weekStart = s => { const d = parseYmd(s); d.setDate(d.getDate() - (d.getDay()+6)%7); return ymd(d); };
+const fmtTime = t => { if(!t) return ''; const d = new Date(t); return `${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const fmtPhone = p => { const s = String(p||''); return /^09\d{8}$/.test(s) ? `${s.slice(0,4)}-${s.slice(4,7)}-${s.slice(7)}` : s; };
+const digits = s => String(s ?? '').replace(/\D/g, '');
+function toast(msg, ms = 2200){ const t = $('#toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => t.style.display = 'none', ms); }
+
+/* ---------- constants ---------- */
+const TYPES = {
+  regular: { label: '常態出貨', cls: 't-regular' },
+  custom:  { label: '客製禮盒', cls: 't-custom' },
+  pr:      { label: '公關品',   cls: 't-pr' }
+};
+const STATUS = { todo: '待製作', ready: '已備妥', done: '已完成', cancel: '已取消' };
+const statusText = o => o.status === 'done' ? (o.method === 'delivery' ? '已出貨' : '已取貨') : STATUS[o.status] || o.status;
+const PAY_METHODS = ['現金', 'LINE Pay', '街口', '匯款/轉帳', '官網付款'];
+
+function seedData(){
+  const P = (id, name, series, unit, std, order, batch = null) => ({ id, name, series, unit, std, order, batch, active: true });
+  const snow = ['招牌鹹蛋','經典原味','包心巧克力','可可2.0','伯爵茶','桂花烏龍茶','酸奶洋蔥','莓果','海鹽焦糖'];
+  const products = snow.map((n, i) => P('p' + pad(i+1), n, '雪球', '顆', n === '包心巧克力' ? 18 : 20, i+1));
+  products.push(P('p10', '美式軟餅乾', '手工餅乾', '片', 6, 10));
+  products.push(P('p11', '蔓越莓燕麥餅乾', '手工餅乾', '片', 8, 11));
+  ['檸檬','伯爵','可可','鹹蛋','抹茶紅豆'].forEach((n, i) =>
+    products.push(P('p' + (12+i), n + '磅蛋糕', '磅蛋糕', '片', 9, 12+i, { label: '條', size: 9 })));
+  const packs = [
+    { id: 'k1', name: '標準罐／整條', useStd: true, size: 0, order: 1 },
+    { id: 'k2', name: '小罐14顆', useStd: false, size: 14, order: 2 },
+    { id: 'k3', name: '小罐12顆', useStd: false, size: 12, order: 3 },
+    { id: 'k4', name: '5顆裝', useStd: false, size: 5, order: 4 },
+    { id: 'k5', name: '3顆裝', useStd: false, size: 3, order: 5 },
+    { id: 'k6', name: '單顆／單片裝', useStd: false, size: 1, order: 6 }
+  ];
+  const config = { staff: ['KS','YH','YR','CT','YP'], sources: ['官方LINE','電話','官網','臉書','IG','其他'], seededAt: Date.now() };
+  return { products, packs, config };
+}
+
+/* ============================================================
+   Data layer: Firestore (real) / in-memory (demo)
+   ============================================================ */
+let DB;
+
+async function firebaseDB(){
+  const base = `https://www.gstatic.com/firebasejs/${FB_VER}/`;
+  const [{ initializeApp }, A, F] = await Promise.all([
+    import(base + 'firebase-app.js'), import(base + 'firebase-auth.js'), import(base + 'firebase-firestore.js')
+  ]);
+  const app = initializeApp(FIREBASE_CONFIG);
+  const auth = A.getAuth(app);
+  let db;
+  try{ db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }); }
+  catch{ db = F.getFirestore(app); }
+  let uid = null;
+  const snapList = s => s.docs.map(d => ({ id: d.id, ...d.data() }));
+  return {
+    async init(){
+      uid = await new Promise((res, rej) => {
+        const off = A.onAuthStateChanged(auth, u => { if(u){ off(); res(u.uid); } });
+        A.signInAnonymously(auth).catch(rej);
+      });
+    },
+    async isMember(){
+      try{ const s = await F.getDoc(F.doc(db, 'keys', uid)); return s.exists(); }catch{ return false; }
+    },
+    async register(code){
+      const tryKey = () => F.setDoc(F.doc(db, 'keys', uid), { code, at: Date.now() });
+      try{ await tryKey(); return true; }
+      catch(e){
+        if(code !== '0000') return false;
+        try{ await F.setDoc(F.doc(db, 'secret', 'pass'), { code: '0000' }); await tryKey(); return true; }catch{ return false; }
+      }
+    },
+    async setPasscode(code){ await F.setDoc(F.doc(db, 'secret', 'pass'), { code }); },
+    watch(col, cb, opts = {}){
+      let q = F.collection(db, col);
+      if(opts.from) q = F.query(q, F.where('shipDate', '>=', opts.from));
+      return F.onSnapshot(q, { includeMetadataChanges: false }, s => cb(snapList(s), s.metadata.fromCache),
+        e => { console.error(col, e); toast('讀取失敗：' + (e.code || e.message)); });
+    },
+    async get(col, id){ const s = await F.getDoc(F.doc(db, col, id)); return s.exists() ? { id: s.id, ...s.data() } : null; },
+    async put(col, id, data){ await F.setDoc(F.doc(db, col, id), clean(data)); },
+    async add(col, data){ const r = await F.addDoc(F.collection(db, col), clean(data)); return r.id; },
+    async patch(col, id, data){ await F.updateDoc(F.doc(db, col, id), clean(data)); },
+    async remove(col, id){ await F.deleteDoc(F.doc(db, col, id)); },
+    async whereEq(col, field, val){ const s = await F.getDocs(F.query(F.collection(db, col), F.where(field, '==', val))); return snapList(s); },
+    async putMany(items){ // [{col,id,data}]
+      for(let i = 0; i < items.length; i += 400){
+        const b = F.writeBatch(db);
+        items.slice(i, i+400).forEach(x => b.set(F.doc(db, x.col, x.id), clean(x.data)));
+        await b.commit();
+      }
+    }
+  };
+}
+
+function demoDB(){
+  const KEY = 'hk-orders-demo';
+  const store = LS.get(KEY, {});
+  const subs = [];
+  const save = () => LS.set(KEY, store);
+  const list = col => Object.entries(store[col] || {}).map(([id, d]) => ({ id, ...d }));
+  const emit = col => subs.filter(s => s.col === col).forEach(s => s.cb(list(col).filter(d => !s.from || (d.shipDate || '') >= s.from), false));
+  const set = (col, id, data) => { (store[col] ||= {})[id] = clean(data); };
+  return {
+    async init(){},
+    async isMember(){ return LS.get('hk-demo-member', false); },
+    async register(code){ const ok = code === (store.secret?.pass?.code || '0000'); if(ok) LS.set('hk-demo-member', true); return ok; },
+    async setPasscode(code){ set('secret', 'pass', { code }); save(); },
+    watch(col, cb, opts = {}){ const s = { col, cb, from: opts.from }; subs.push(s); setTimeout(() => s.cb(list(col).filter(d => !s.from || (d.shipDate || '') >= s.from), false)); return () => subs.splice(subs.indexOf(s), 1); },
+    async get(col, id){ const d = store[col]?.[id]; return d ? { id, ...d } : null; },
+    async put(col, id, data){ set(col, id, data); save(); emit(col); },
+    async add(col, data){ const id = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); set(col, id, data); save(); emit(col); return id; },
+    async patch(col, id, data){ store[col][id] = { ...store[col][id], ...clean(data) }; save(); emit(col); },
+    async remove(col, id){ delete store[col]?.[id]; save(); emit(col); },
+    async whereEq(col, field, val){ return list(col).filter(d => d[field] === val); },
+    async putMany(items){ const cols = new Set(); items.forEach(x => { set(x.col, x.id, x.data); cols.add(x.col); }); save(); cols.forEach(emit); }
+  };
+}
+
+/* ============================================================
+   State
+   ============================================================ */
+const S = {
+  me: LS.get('hk-me', ''),
+  tab: LS.get('hk-tab', 'kitchen'),
+  range: LS.get('hk-range', null) || { from: today(), to: today() },
+  fieldFilter: 'open',
+  ordersQ: '', ordersPast: false,
+  config: null, products: [], packs: [], boxes: [], mappings: [], orders: [],
+  pm: {}, km: {}, bm: {},
+  loaded: {}, windowFrom: null, offOrders: null
+};
+const saveRange = () => LS.set('hk-range', S.range);
+function indexAll(){
+  S.pm = Object.fromEntries(S.products.map(p => [p.id, p]));
+  S.km = Object.fromEntries(S.packs.map(k => [k.id, k]));
+  S.bm = Object.fromEntries(S.boxes.map(b => [b.id, b]));
+}
+const byOrder = (a, b) => (a.order ?? 999) - (b.order ?? 999) || String(a.name).localeCompare(String(b.name));
+
+/* ============================================================
+   Core logic (pure)
+   ============================================================ */
+const packSizeFor = (product, pack) => pack?.useStd ? (Number(product?.std) || 1) : (Number(pack?.size) || 1);
+const packLabel = (packName, size, unit) => `${packName}（${size}${unit || ''}）`;
+
+function snapItem(productId, packId, qty){
+  const p = S.pm[productId], k = S.km[packId];
+  return { productId, productName: p?.name || '（已刪除品項）', unit: p?.unit || '顆',
+           packId, packName: k?.name || '（已刪除包裝）', packSize: packSizeFor(p, k), qty: Number(qty) || 0 };
+}
+function snapBox(boxId){
+  const b = S.bm[boxId];
+  return (b?.items || []).map(it => snapItem(it.productId, it.packId, it.qty));
+}
+/* order -> flat list of {productId, packId, packSize, count(packs), units} */
+function expand(o){
+  const out = [];
+  for(const l of o.lines || []){
+    if(l.kind === 'box') for(const it of l.items || []) out.push({ ...it, count: (Number(it.qty) || 0) * (Number(l.qty) || 0) });
+    else out.push({ ...l, count: Number(l.qty) || 0 });
+  }
+  return out.map(x => ({ ...x, units: x.count * (Number(x.packSize) || 1) }));
+}
+function aggregate(orders){
+  const map = new Map();
+  for(const o of orders) for(const x of expand(o)){
+    if(!x.count) continue;
+    let r = map.get(x.productId);
+    if(!r){
+      const p = S.pm[x.productId];
+      r = { id: x.productId, name: p?.name || x.productName, unit: p?.unit || x.unit || '顆', series: p?.series || '其他',
+            batch: p?.batch || null, order: p?.order ?? 999, units: 0, packs: new Map() };
+      map.set(x.productId, r);
+    }
+    r.units += x.units;
+    const key = x.packId + '|' + x.packSize;
+    const k = r.packs.get(key) || { name: S.km[x.packId]?.name || x.packName, size: x.packSize, order: S.km[x.packId]?.order ?? 99, count: 0 };
+    k.count += x.count; r.packs.set(key, k);
+  }
+  return [...map.values()].sort((a, b) => a.order - b.order);
+}
+const inRange = o => o.shipDate >= S.range.from && o.shipDate <= S.range.to;
+const rangeOrders = () => S.orders.filter(inRange);
+const todoOrders = () => rangeOrders().filter(o => o.status === 'todo');
+
+/* ---------- 官網 Excel parsing ---------- */
+const stripPrefix = name => String(name || '').replace(/^\s*[\(（][^\)）]*[\)）]\s*/, '').trim();
+function guessShipDate(productName, orderTime){
+  const m = String(productName || '').match(/[\(（]\s*(\d{1,2})\s*[\/\.月]\s*(\d{1,2})/);
+  if(!m) return '';
+  const mo = +m[1], d = +m[2];
+  if(mo < 1 || mo > 12 || d < 1 || d > 31) return '';
+  const t = String(orderTime || '').match(/(\d{4})[\/\-](\d{1,2})/);
+  let y = t ? +t[1] : new Date().getFullYear();
+  if(t && mo < +t[2] - 6) y += 1;
+  return `${y}-${pad(mo)}-${pad(d)}`;
+}
+function normPhone(p){
+  let s = digits(p);
+  if(/^9\d{8}$/.test(s)) s = '0' + s;
+  if(s.startsWith('886') && s.length === 12) s = '0' + s.slice(3);
+  return s;
+}
+function parseCyber(rows){
+  const hi = rows.findIndex(r => (r || []).some(c => String(c).trim() === '商品名稱'));
+  if(hi < 0) throw new Error('找不到「商品名稱」欄位，請確認是官網匯出的訂單報表');
+  const H = rows[hi].map(c => String(c ?? '').trim());
+  const col = n => H.indexOf(n);
+  const C = { buyer: col('購買人名稱'), member: col('會員名稱'), phone: col('購買人電話'), item: col('商品名稱'), qty: col('數量'),
+              ship: col('運費'), pay: col('付款狀態'), time: col('時間'), no: col('訂單編號'), note: col('備註') };
+  const get = (r, k) => C[k] >= 0 ? r[C[k]] : '';
+  const orders = []; let cur = null;
+  for(const r of rows.slice(hi + 1)){
+    if(!r || !r.some(c => String(c ?? '').trim())) continue;
+    const no = String(get(r, 'no') || '').trim();
+    const item = String(get(r, 'item') || '').trim();
+    if(no && (!cur || cur.no !== no)){
+      cur = { no, name: String(get(r, 'buyer') || get(r, 'member') || '').trim(), phone: normPhone(get(r, 'phone')),
+              time: String(get(r, 'time') || ''), pay: String(get(r, 'pay') || ''), ship: 0, note: '', items: [] };
+      orders.push(cur);
+    }
+    if(!cur) continue;
+    cur.ship = Math.max(cur.ship, Number(get(r, 'ship')) || 0);
+    const note = String(get(r, 'note') || '').trim();
+    if(note && !cur.note.includes(note)) cur.note = cur.note ? cur.note + '；' + note : note;
+    if(item) cur.items.push({ raw: item, key: stripPrefix(item), qty: Number(get(r, 'qty')) || 1 });
+  }
+  return orders.map(o => {
+    const dates = [...new Set(o.items.map(i => guessShipDate(i.raw, o.time)).filter(Boolean))];
+    const tax = o.note.match(/(?:統編|統一編號)[^\d]{0,4}(\d{8})/) || (/(收據|發票)/.test(o.note) && o.note.match(/(?:^|\D)(\d{8})(?!\d)/));
+    const am = /早上|上午|(?:^|\D)(0?[7-9]|1[01])\s*[:：點]/.test(o.note);
+    return {
+      cyberId: o.no, docId: 'cb-' + (digits(o.no || '') || Math.random().toString(36).slice(2)), name: o.name, phone: o.phone,
+      shipDate: dates[0] || '', dateConflict: dates.length > 1,
+      method: o.ship > 0 ? 'delivery' : 'pickup',
+      paid: /已收到|已付/.test(o.pay), payText: o.pay,
+      note: o.note, taxId: tax ? tax[1] : '', am,
+      items: o.items, time: o.time
+    };
+  });
+}
+
+/* ============================================================
+   Boot / auth / subscriptions
+   ============================================================ */
+async function boot(){
+  try{
+    DB = DEMO ? demoDB() : await firebaseDB();
+    await DB.init();
+  }catch(e){
+    console.error(e);
+    $('#app').innerHTML = `<div class="login"><h1>無法連線</h1><p class="sum">請確認網路連線後重新整理。<br><small>${esc(e.code || e.message)}</small></p></div>`;
+    return;
+  }
+  if(!(await DB.isMember())) return renderLogin();
+  start();
+}
+
+function renderLogin(err = ''){
+  $('#app').innerHTML = `<div class="login">
+    <h1>半吊子 訂單系統</h1>
+    <p class="sum" style="text-align:center">請輸入全店通行碼${DEMO ? '（試用版：0000）' : ''}</p>
+    <input id="pass" type="password" inputmode="numeric" autocomplete="off" autofocus>
+    ${err ? `<div class="err" style="text-align:center">${esc(err)}</div>` : ''}
+    <button class="btn pri block" data-act="login">進入</button></div>`;
+  $('#pass').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
+}
+async function doLogin(){
+  const code = $('#pass').value.trim();
+  if(!code) return;
+  $('[data-act=login]').disabled = true;
+  const ok = await DB.register(code);
+  if(!ok) return renderLogin('通行碼不正確');
+  start();
+}
+
+function start(){
+  const watch = (col, key) => DB.watch(col, (docs, fromCache) => {
+    S[key] = docs; S.loaded[key] = true;
+    if(key === 'config_list'){
+      const main = docs.find(d => d.id === 'main');
+      if(main) S.config = main;
+      else if(!fromCache && !start._seeding){ start._seeding = true; seed(); }
+    }
+    indexAll(); render();
+  });
+  watch('config', 'config_list');
+  watch('products', 'products');
+  watch('packs', 'packs');
+  watch('boxes', 'boxes');
+  watch('mappings', 'mappings');
+  subscribeOrders();
+}
+async function seed(){
+  const { products, packs, config } = seedData();
+  const items = [
+    ...products.map(p => ({ col: 'products', id: p.id, data: p })),
+    ...packs.map(k => ({ col: 'packs', id: k.id, data: k })),
+    { col: 'config', id: 'main', data: config }
+  ];
+  if(DEMO) items.push(...demoOrders(products));
+  await DB.putMany(items);
+}
+function subscribeOrders(){
+  const from = [addDays(today(), -60), S.range.from].sort()[0];
+  if(S.windowFrom && from >= S.windowFrom) return;
+  S.windowFrom = from;
+  S.offOrders?.();
+  S.offOrders = DB.watch('orders', docs => { S.orders = docs; S.loaded.orders = true; render(); }, { from });
+}
+
+/* ============================================================
+   Rendering
+   ============================================================ */
+const TABS = [
+  ['kitchen', '內場', '🍪'], ['pack', '包裝', '📦'], ['field', '外場', '🛍'], ['orders', '訂單', '📝'], ['settings', '設定', '⚙']
+];
+function render(){
+  if(!S.config){ $('#app').innerHTML = `<div class="empty">載入中…</div>`; return; }
+  if(!S.me || !S.config.staff.includes(S.me)) return renderWho();
+  const showRange = ['kitchen', 'pack', 'field'].includes(S.tab);
+  const sy = window.scrollY;
+  $('#app').innerHTML = `
+    <header class="top"><h1>半吊子 訂單</h1>${DEMO ? '<span class="demo-flag">試用版</span>' : ''}
+      <button class="me" data-act="who">${esc(S.me)}</button></header>
+    ${showRange ? rangeBar() : ''}
+    <main>${({ kitchen: viewKitchen, pack: viewPack, field: viewField, orders: viewOrders, settings: viewSettings })[S.tab]()}</main>
+    <nav class="tabs"><div class="in">${TABS.map(([k, l, ic]) =>
+      `<button class="${S.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}"><span class="ic">${ic}</span>${l}</button>`).join('')}</div></nav>`;
+  window.scrollTo(0, sy);
+}
+function renderWho(){
+  $('#app').innerHTML = `<div class="login"><h1>你是哪位夥伴？</h1>
+    <p class="sum" style="text-align:center">選一次，這支手機就會記住</p>
+    <div class="who">${(S.config?.staff || []).map(n => `<button data-act="pick-me" data-v="${esc(n)}">${esc(n)}</button>`).join('')}</div></div>`;
+}
+
+function rangeBar(){
+  const t = today(), r = S.range;
+  const ws = weekStart(t);
+  const q = [
+    ['今天', t, t], ['明天', addDays(t, 1), addDays(t, 1)], ['本週', ws, addDays(ws, 6)],
+    ['下週', addDays(ws, 7), addDays(ws, 13)], ['未來7天', t, addDays(t, 6)]
+  ];
+  return `<div class="range"><div class="row">
+      <input type="date" id="rf" value="${r.from}"><span>～</span><input type="date" id="rt" value="${r.to}"></div>
+    <div class="chips">${q.map(([l, f, to]) => `<button class="chip ${r.from === f && r.to === to ? 'on' : ''}" data-act="range" data-f="${f}" data-t="${to}">${l}</button>`).join('')}</div></div>`;
+}
+const rangeText = () => S.range.from === S.range.to ? fmtDate(S.range.from) : `${fmtDate(S.range.from)} ～ ${fmtDate(S.range.to)}`;
+
+/* ---------- ① 內場 ---------- */
+function viewKitchen(){
+  const os = todoOrders();
+  const agg = aggregate(os);
+  const readyN = rangeOrders().filter(o => o.status === 'ready').length;
+  if(!agg.length) return `<div class="sum">${rangeText()}</div><div class="empty">這段期間沒有待製作的訂單${readyN ? `<br><small>（另有 ${readyN} 筆已備妥）</small>` : ''}</div>`;
+  const series = [...new Set(agg.map(a => a.series))];
+  return `<div class="sum">${rangeText()}　待製作 <b>${os.length}</b> 筆，共 <b>${agg.length}</b> 種品項${readyN ? `（已備妥 ${readyN} 筆不計）` : ''}</div>
+    ${series.map(s => `<h2 class="sec">${esc(s)}</h2><div class="grid">${agg.filter(a => a.series === s).map(a => `
+      <div class="kpi"><div class="name">${esc(a.name)}</div>
+        <div class="n">${a.units}<span class="u">${esc(a.unit)}</span></div>
+        ${a.batch?.size ? `<div class="sub">→ 需烤 ${Math.ceil(a.units / a.batch.size)} ${esc(a.batch.label)}${a.units % a.batch.size ? `（多 ${a.batch.size - a.units % a.batch.size} ${esc(a.unit)}）` : ''}</div>` : ''}
+      </div>`).join('')}</div>`).join('')}`;
+}
+
+/* ---------- ② 包裝 ---------- */
+function viewPack(){
+  const os = todoOrders();
+  const agg = aggregate(os);
+  if(!agg.length) return `<div class="sum">${rangeText()}</div><div class="empty">這段期間沒有需要準備的包裝</div>`;
+  const tot = new Map();
+  agg.forEach(a => a.packs.forEach(k => { const key = k.name + '|' + k.size; const t = tot.get(key) || { ...k, count: 0, unit: a.unit }; t.count += k.count; tot.set(key, t); }));
+  const totList = [...tot.values()].sort((a, b) => a.order - b.order || b.size - a.size);
+  return `<div class="sum">${rangeText()}　待製作 <b>${os.length}</b> 筆</div>
+    <div class="card"><div style="font-size:13.5px;color:var(--muted);margin-bottom:6px">包裝總數</div>
+      <div class="totals">${totList.map(t => `<span>${esc(packLabel(t.name, t.size, t.unit))} <b>${t.count}</b> 個</span>`).join('')}</div></div>
+    ${agg.map(a => {
+      const ps = [...a.packs.values()].sort((x, y) => x.order - y.order || y.size - x.size);
+      return `<div class="card"><div class="pk-head"><b>${esc(a.name)}</b><span>共 ${a.units} ${esc(a.unit)}</span></div>
+        ${ps.map(k => `<div class="pk-row"><span>${esc(packLabel(k.name, k.size, a.unit))}</span><span class="c">× ${k.count}</span></div>`).join('')}</div>`;
+    }).join('')}`;
+}
+
+/* ---------- ③ 外場 ---------- */
+function viewField(){
+  const t = today(), tm = addDays(t, 1);
+  const live = S.orders.filter(o => o.status !== 'cancel' && o.status !== 'done');
+  const amTomorrow = live.filter(o => o.shipDate === tm && o.slot === 'am' && o.method !== 'delivery');
+  const unpaidToday = live.filter(o => o.shipDate === t && !o.paid);
+  const alerts = [];
+  if(amTomorrow.length) alerts.push(`<div class="alert amber"><b>明天早上取貨，今天先打包好</b><ul>${amTomorrow.map(o => `<li>${esc(o.name)}　${fmtPhone(o.phone)}</li>`).join('')}</ul></div>`);
+  if(unpaidToday.length) alerts.push(`<div class="alert red"><b>今天交付、尚未付款，記得收款</b><ul>${unpaidToday.map(o => `<li>${esc(o.name)}　${fmtPhone(o.phone)}</li>`).join('')}</ul></div>`);
+
+  const F = { open: ['未完成', o => o.status === 'todo' || o.status === 'ready'], todo: ['待製作', o => o.status === 'todo'],
+              ready: ['已備妥', o => o.status === 'ready'], done: ['已完成', o => o.status === 'done'], all: ['全部', o => o.status !== 'cancel'] };
+  const list = rangeOrders().filter(F[S.fieldFilter][1]).sort((a, b) => a.shipDate.localeCompare(b.shipDate) || (a.slot === 'am' ? -1 : 0) - (b.slot === 'am' ? -1 : 0) || a.name.localeCompare(b.name));
+  const days = [...new Set(list.map(o => o.shipDate))];
+  return `${alerts.join('')}
+    <div class="chips" style="margin:0 0 6px">${Object.entries(F).map(([k, [l]]) => `<button class="chip ${S.fieldFilter === k ? 'on' : ''}" data-act="ffilter" data-v="${k}">${l}</button>`).join('')}</div>
+    ${list.length ? days.map(d => {
+      const os = list.filter(o => o.shipDate === d);
+      return `<div class="dayh">${fmtDate(d)}<span>${os.length} 筆</span></div>${os.map(o => orderCard(o)).join('')}`;
+    }).join('') : `<div class="empty">這段期間沒有訂單</div>`}`;
+}
+
+function linesHtml(o){
+  return (o.lines || []).map(l => l.kind === 'box'
+    ? `<div class="bx">${esc(l.boxName)} × ${l.qty} 盒</div>${(l.items || []).map(it => `<div class="sub">${esc(it.productName)}｜${esc(it.packName)} × ${it.qty}${l.qty > 1 ? `（共 ${it.qty * l.qty}）` : ''}</div>`).join('')}`
+    : `<div>${esc(l.productName)}｜${esc(packLabel(l.packName, l.packSize, l.unit))} × ${l.qty}</div>`).join('');
+}
+function orderCard(o, opts = {}){
+  const t = TYPES[o.type] || TYPES.regular;
+  const b = [];
+  b.push(`<span class="b type">${t.label}</span>`);
+  b.push(o.paid ? `<span class="b ok">已付款${o.payMethod ? '・' + esc(o.payMethod) : ''}</span>` : `<span class="b red">未付款</span>`);
+  if(o.source) b.push(`<span class="b">${esc(o.source)}</span>`);
+  b.push(`<span class="b">${o.method === 'delivery' ? '宅配' : '自取'}</span>`);
+  if(o.slot === 'am' && o.method !== 'delivery') b.push(`<span class="b amber">早上取貨</span>`);
+  if(o.card?.need) b.push(`<span class="b amber">小卡</span>`);
+  if(o.receipt?.need) b.push(`<span class="b amber">收據</span>`);
+  if(o.status !== 'todo') b.push(`<span class="b st">${statusText(o)}</span>`);
+  const needs = [];
+  if(o.card?.need) needs.push(`<div><b>小卡：</b>${esc(o.card.text || '（未填內容）')}</div>`);
+  if(o.receipt?.need) needs.push(`<div><b>收據：</b>${o.receipt.taxId ? '統編 ' + esc(o.receipt.taxId) : '不需統編'}</div>`);
+  if(o.paid && o.payMethod === '匯款/轉帳') needs.push(`<div><b>匯款：</b>${esc(o.transferDate || '')} 末五碼 ${esc(o.last5 || '')}</div>`);
+  if(o.note) needs.push(`<div><b>備註：</b>${esc(o.note)}</div>`);
+  const acts = [];
+  if(o.status === 'todo') acts.push(`<button class="btn pri sm" data-act="status" data-id="${o.id}" data-v="ready">標記已備妥</button>`);
+  if(o.status === 'ready'){
+    acts.push(`<button class="btn pri sm" data-act="status" data-id="${o.id}" data-v="done">${o.method === 'delivery' ? '已出貨' : '已取貨'}</button>`);
+    acts.push(`<button class="btn sm" data-act="status" data-id="${o.id}" data-v="todo">退回待製作</button>`);
+  }
+  if(o.status === 'done') acts.push(`<button class="btn sm" data-act="status" data-id="${o.id}" data-v="ready">復原</button>`);
+  acts.push(`<button class="btn sm" data-act="edit" data-id="${o.id}">編輯</button>`);
+  return `<div class="oc ${t.cls} st-${o.status}">
+    <div class="l1"><span class="nm">${esc(o.name)}</span><a class="ph" href="tel:${esc(o.phone)}">${fmtPhone(o.phone)}</a>
+      ${opts.showDate ? `<span class="b">${fmtDate(o.shipDate)}</span>` : ''}</div>
+    <div class="badges">${b.join('')}</div>
+    <div class="items">${linesHtml(o) || '<span class="sub">（沒有品項）</span>'}</div>
+    ${needs.length ? `<div class="need">${needs.join('')}</div>` : ''}
+    <div class="acts">${acts.join('')}</div>
+    <div class="meta">${o.cyberId ? `官網 ${esc(o.cyberId)}・` : ''}最後更新 ${esc(o.updatedBy || o.createdBy || '')} ${fmtTime(o.updatedAt || o.createdAt)}</div>
+  </div>`;
+}
+
+/* ---------- ④ 訂單 ---------- */
+function viewOrders(){
+  const q = S.ordersQ.trim().toLowerCase();
+  const qd = digits(q);
+  let list = S.orders.filter(o => o.status !== 'cancel' || q);
+  if(q) list = list.filter(o => (o.name || '').toLowerCase().includes(q) || (qd && (o.phone || '').includes(qd)) || (o.cyberId || '').includes(q));
+  const t = today();
+  const up = list.filter(o => o.shipDate >= t).sort((a, b) => a.shipDate.localeCompare(b.shipDate));
+  const past = list.filter(o => o.shipDate < t).sort((a, b) => b.shipDate.localeCompare(a.shipDate));
+  return `<div class="toolbar">
+      <button class="btn pri" data-act="new">＋ 新增訂單</button>
+      <button class="btn" data-act="import">匯入官網 Excel</button>
+      <button class="btn" data-act="export">匯出 Excel</button></div>
+    <input class="search" id="oq" placeholder="搜尋姓名、電話、官網訂單編號" value="${esc(S.ordersQ)}">
+    ${qd.length >= 8 ? `<button class="btn sm" data-act="history" data-v="${qd}" style="margin:-4px 0 10px">查詢這支電話的所有歷史訂單</button>` : ''}
+    <h2 class="sec">即將出貨（${up.length}）</h2>
+    ${up.map(o => orderCard(o, { showDate: true })).join('') || '<div class="empty">沒有訂單</div>'}
+    <h2 class="sec"><button class="chip" data-act="past">${S.ordersPast ? '收起' : '顯示'}過去訂單（${past.length}）</button></h2>
+    ${S.ordersPast ? past.map(o => orderCard(o, { showDate: true })).join('') : ''}`;
+}
+
+/* ---------- ⑤ 設定 ---------- */
+function viewSettings(){
+  const c = S.config;
+  const prods = [...S.products].sort(byOrder), packs = [...S.packs].sort(byOrder), boxes = [...S.boxes].sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  return `
+  <div class="box"><div class="bt">夥伴名單</div>
+    <div>${c.staff.map(n => `<span class="tag">${esc(n)}<button data-act="staff-del" data-v="${esc(n)}">×</button></span>`).join('')}</div>
+    <div class="inl"><input id="newStaff" placeholder="新增夥伴"><button class="btn" data-act="staff-add">新增</button></div></div>
+
+  <div class="box"><div class="bt">訂購來源</div>
+    <div>${c.sources.map(n => `<span class="tag">${esc(n)}<button data-act="src-del" data-v="${esc(n)}">×</button></span>`).join('')}</div>
+    <div class="inl"><input id="newSrc" placeholder="新增來源"><button class="btn" data-act="src-add">新增</button></div></div>
+
+  <div class="box"><div class="bt">禮盒組合</div>
+    ${boxes.map(b => `<div class="set-row"><div><div class="t1">${esc(b.name)}${b.active === false ? '（停用）' : ''}</div>
+      <div class="t2">${(b.items || []).map(it => `${esc(S.pm[it.productId]?.name || '?')}｜${esc(S.km[it.packId]?.name || '?')}×${it.qty}`).join('、') || '尚未設定內容'}</div></div>
+      <button class="btn sm" data-act="box-edit" data-id="${b.id}">編輯</button></div>`).join('') || '<div class="t2">尚未建立</div>'}
+    <button class="btn block" data-act="box-edit" style="margin-top:8px">＋ 新增禮盒組合</button></div>
+
+  <div class="box"><div class="bt">官網商品對應</div>
+    ${S.mappings.map(m => `<div class="set-row"><div><div class="t1">${esc(m.key)}</div><div class="t2">→ ${esc(mapTargetText(m))}</div></div>
+      <button class="btn sm" data-act="map-edit" data-id="${m.id}">修改</button></div>`).join('') || '<div class="t2">匯入官網 Excel 時，遇到新商品會請你對應</div>'}</div>
+
+  <div class="box"><div class="bt">品項</div>
+    ${prods.map(p => `<div class="set-row"><div><div class="t1">${esc(p.name)}${p.active === false ? '（停用）' : ''}</div>
+      <div class="t2">${esc(p.series)}・單位 ${esc(p.unit)}・標準 ${p.std}${esc(p.unit)}${p.batch?.size ? `・${p.batch.size}${esc(p.unit)}=1${esc(p.batch.label)}` : ''}</div></div>
+      <button class="btn sm" data-act="prod-edit" data-id="${p.id}">編輯</button></div>`).join('')}
+    <button class="btn block" data-act="prod-edit" style="margin-top:8px">＋ 新增品項</button></div>
+
+  <div class="box"><div class="bt">包裝規格</div>
+    ${packs.map(k => `<div class="set-row"><div><div class="t1">${esc(k.name)}</div>
+      <div class="t2">${k.useStd ? '依品項標準數量' : `每包 ${k.size}`}</div></div>
+      <button class="btn sm" data-act="pack-edit" data-id="${k.id}">編輯</button></div>`).join('')}
+    <button class="btn block" data-act="pack-edit" style="margin-top:8px">＋ 新增包裝規格</button></div>
+
+  <div class="box"><div class="bt">全店通行碼</div>
+    <div class="inl"><input id="newPass" type="password" inputmode="numeric" placeholder="輸入新通行碼"><button class="btn" data-act="pass-set">更新</button></div>
+    <div class="t2" style="margin-top:6px;font-size:13px;color:var(--muted)">更新後，新手機需要用新通行碼登入；已登入的手機不受影響。</div></div>
+
+  <div class="box"><div class="bt">這支手機</div>
+    <div class="set-row"><div class="t1">目前使用者：${esc(S.me)}</div><button class="btn sm" data-act="who">切換</button></div></div>
+  <p class="sum" style="text-align:center">半吊子 訂單系統 v1.0${DEMO ? '・試用版（資料只存在這台裝置）' : ''}</p>`;
+}
+function mapTargetText(m){
+  if(m.kind === 'box') return '禮盒｜' + (S.bm[m.boxId]?.name || '（已刪除）');
+  if(m.kind === 'item') return '單品｜' + (S.pm[m.productId]?.name || '?') + '　' + (S.km[m.packId]?.name || '?');
+  return '?';
+}
+
+/* ============================================================
+   Modal helpers
+   ============================================================ */
+let modalRender = null;
+function openModal(title, bodyFn, footHtml = ''){
+  modalRender = () => {
+    const sb = $('#modal .mb')?.scrollTop || 0;
+    $('#modal').innerHTML = `<div class="sheet"><div class="mh"><h3>${esc(title)}</h3><button data-act="close">×</button></div>
+      <div class="mb">${bodyFn()}</div>${typeof footHtml === 'function' ? footHtml() : footHtml ? `<div class="mf">${footHtml}</div>` : ''}</div>`;
+    const mb = $('#modal .mb'); if(mb) mb.scrollTop = sb;
+  };
+  modalRender();
+  $('#modal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){ $('#modal').classList.remove('show'); $('#modal').innerHTML = ''; modalRender = null; draft = null; document.body.style.overflow = ''; }
+const rerenderModal = () => modalRender && modalRender();
+
+/* option builders */
+function productOptions(sel){
+  const ps = [...S.products].filter(p => p.active !== false || p.id === sel).sort(byOrder);
+  const series = [...new Set(ps.map(p => p.series))];
+  return `<option value="">選擇品項</option>` + series.map(s => `<optgroup label="${esc(s)}">${ps.filter(p => p.series === s).map(p =>
+    `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</optgroup>`).join('');
+}
+function packOptions(sel, productId){
+  const p = S.pm[productId];
+  return [...S.packs].sort(byOrder).map(k => `<option value="${k.id}" ${k.id === sel ? 'selected' : ''}>${esc(k.useStd && p ? packLabel(k.name, p.std, p.unit) : k.name)}</option>`).join('');
+}
+function boxOptions(sel){
+  return `<option value="">選擇禮盒組合</option>` + [...S.boxes].filter(b => b.active !== false || b.id === sel)
+    .sort((a, b) => String(a.name).localeCompare(String(b.name))).map(b => `<option value="${b.id}" ${b.id === sel ? 'selected' : ''}>${esc(b.name)}</option>`).join('');
+}
+const defaultPack = () => [...S.packs].sort(byOrder)[0]?.id || '';
+
+/* ============================================================
+   Order form
+   ============================================================ */
+let draft = null;
+function blankOrder(){
+  return { type: 'regular', source: S.config.sources[0] || '', name: '', phone: '', shipDate: addDays(today(), 1),
+    method: 'pickup', slot: 'pm', lines: [], card: { need: false, text: '' }, receipt: { need: false, taxId: '' },
+    paid: false, payMethod: '', transferDate: '', last5: '', status: 'todo', note: '' };
+}
+function openOrderForm(o){
+  draft = o ? clean(o) : blankOrder();
+  draft._err = '';
+  const seg = (path, opts, cur, clsFn) => `<div class="seg">${opts.map(([v, l]) =>
+    `<button type="button" class="${String(cur) === String(v) ? 'on' : ''} ${clsFn ? clsFn(v) : ''}" data-act="set" data-path="${path}" data-v="${esc(v)}">${esc(l)}</button>`).join('')}</div>`;
+  openModal(o ? '編輯訂單' : '新增訂單', () => {
+    const d = draft;
+    const lines = d.lines.map((l, i) => {
+      if(l.kind === 'box'){
+        const its = l._fresh || !l.items ? snapBox(l.boxId) : l.items;
+        return `<div class="line"><div class="lr bx"><select data-line="${i}" data-lf="boxId">${boxOptions(l.boxId)}</select>
+          <input type="number" min="0" inputmode="numeric" data-line="${i}" data-lf="qty" value="${l.qty}"><button class="x" data-act="line-del" data-v="${i}">×</button></div>
+          <div class="hint">${its.map(it => `${esc(it.productName)}｜${esc(it.packName)}×${it.qty}`).join('、') || '（這個組合還沒有設定內容）'}</div></div>`;
+      }
+      const p = S.pm[l.productId], k = S.km[l.packId];
+      const units = p && k ? packSizeFor(p, k) * (Number(l.qty) || 0) : 0;
+      return `<div class="line"><div class="lr"><select data-line="${i}" data-lf="productId">${productOptions(l.productId)}</select>
+        <select data-line="${i}" data-lf="packId">${packOptions(l.packId, l.productId)}</select>
+        <input type="number" min="0" inputmode="numeric" data-line="${i}" data-lf="qty" value="${l.qty}"><button class="x" data-act="line-del" data-v="${i}">×</button></div>
+        ${units ? `<div class="hint">共 ${units} ${esc(p.unit)}</div>` : ''}</div>`;
+    }).join('');
+    return `
+      <div class="box"><div class="bt">訂單類型</div>${seg('type', Object.entries(TYPES).map(([k, v]) => [k, v.label]), d.type, v => TYPES[v].cls)}</div>
+      <div class="box"><div class="bt">客人</div>
+        <div class="two"><div class="f"><label>姓名 *</label><input type="text" data-k="name" value="${esc(d.name)}"></div>
+        <div class="f"><label>電話 *</label><input type="tel" inputmode="tel" data-k="phone" value="${esc(d.phone)}"></div></div>
+        <div class="f"><label>訂購來源 *</label>${seg('source', S.config.sources.map(s => [s, s]), d.source)}</div></div>
+      <div class="box"><div class="bt">出貨</div>
+        <div class="f"><label>出貨／取貨日 *</label><input type="date" data-k="shipDate" value="${esc(d.shipDate)}"></div>
+        <div class="f"><label>取貨方式</label>${seg('method', [['pickup', '自取'], ['delivery', '宅配']], d.method)}</div>
+        ${d.method === 'pickup' ? `<div class="f"><label>取貨時段</label>${seg('slot', [['pm', '下午'], ['am', '早上（前一天要打包好）']], d.slot)}</div>` : ''}</div>
+      <div class="box"><div class="bt">品項 *</div>${lines || '<div class="t2" style="color:var(--muted);font-size:14px;margin-bottom:8px">還沒有品項</div>'}
+        <div class="acts"><button class="btn sm" data-act="line-add" data-v="item">＋ 單品</button><button class="btn sm" data-act="line-add" data-v="box">＋ 禮盒組合</button></div></div>
+      <div class="box"><div class="bt">特殊需求</div>
+        <label class="chk"><input type="checkbox" data-k="card.need" ${d.card.need ? 'checked' : ''}>需要小卡</label>
+        ${d.card.need ? `<div class="f"><textarea data-k="card.text" placeholder="小卡內容">${esc(d.card.text)}</textarea></div>` : ''}
+        <label class="chk"><input type="checkbox" data-k="receipt.need" ${d.receipt.need ? 'checked' : ''}>需要收據</label>
+        ${d.receipt.need ? `<div class="f"><input type="text" inputmode="numeric" data-k="receipt.taxId" placeholder="統編（不需要可留空）" value="${esc(d.receipt.taxId)}"></div>` : ''}</div>
+      <div class="box"><div class="bt">付款</div>
+        ${seg('paid', [['false', '未付款'], ['true', '已付款']], d.paid)}
+        ${d.paid ? `<div class="f" style="margin-top:10px"><label>付款方式 *</label>${seg('payMethod', PAY_METHODS.map(m => [m, m]), d.payMethod)}</div>
+          ${d.payMethod === '匯款/轉帳' ? `<div class="two"><div class="f"><label>匯款日期 *</label><input type="date" data-k="transferDate" value="${esc(d.transferDate)}"></div>
+            <div class="f"><label>帳號末五碼 *</label><input type="text" inputmode="numeric" maxlength="5" data-k="last5" value="${esc(d.last5)}"></div></div>` : ''}` : ''}</div>
+      <div class="box"><div class="bt">狀態與備註</div>
+        ${seg('status', [['todo', '待製作'], ['ready', '已備妥'], ['done', d.method === 'delivery' ? '已出貨' : '已取貨'], ['cancel', '取消']], d.status)}
+        <div class="f" style="margin-top:10px"><textarea data-k="note" placeholder="備註">${esc(d.note)}</textarea></div>
+        ${d.log?.length ? `<details><summary>修改紀錄（${d.log.length}）</summary>${d.log.slice().reverse().map(x => `<div class="t2" style="font-size:13px;color:var(--muted)">${fmtTime(x.at)} ${esc(x.by)}：${esc(x.act)}</div>`).join('')}</details>` : ''}</div>
+      ${d._err ? `<div class="err">${esc(d._err)}</div>` : ''}`;
+  }, `<button class="btn" data-act="close">取消</button><button class="btn pri" data-act="save-order">儲存</button>`);
+}
+function setPath(obj, path, val){ const ks = path.split('.'); let o = obj; ks.slice(0, -1).forEach(k => o = o[k] ||= {}); o[ks.at(-1)] = val; }
+
+async function saveOrder(){
+  const d = draft;
+  const phone = digits(d.phone);
+  const err = !d.name.trim() ? '請填姓名' : !phone ? '請填電話' : !d.shipDate ? '請填出貨日' : !d.source ? '請選訂購來源'
+    : !d.lines.length ? '請至少加一個品項' : d.lines.some(l => l.kind === 'box' ? !l.boxId : !l.productId || !l.packId) ? '有品項還沒選好'
+    : d.lines.some(l => !(Number(l.qty) > 0)) ? '數量要大於 0' : d.paid && !d.payMethod ? '請選付款方式'
+    : d.paid && d.payMethod === '匯款/轉帳' && (!d.transferDate || !/^\d{5}$/.test(d.last5 || '')) ? '匯款請填日期和帳號末五碼（5 碼數字）' : '';
+  if(err){ d._err = err; rerenderModal(); return; }
+  const lines = d.lines.map(l => l.kind === 'box'
+    ? { kind: 'box', boxId: l.boxId, boxName: S.bm[l.boxId]?.name || l.boxName || '', qty: Number(l.qty), items: l._fresh || !l.items ? snapBox(l.boxId) : l.items }
+    : { kind: 'item', ...snapItem(l.productId, l.packId, l.qty) });
+  const now = Date.now();
+  const data = { ...d, phone, name: d.name.trim(), lines, updatedBy: S.me, updatedAt: now };
+  if(!data.paid){ data.payMethod = ''; data.transferDate = ''; data.last5 = ''; }
+  if(data.payMethod !== '匯款/轉帳'){ data.transferDate = ''; data.last5 = ''; }
+  if(data.method === 'delivery') data.slot = 'pm';
+  delete data._err; delete data.id;
+  $('[data-act=save-order]').disabled = true;
+  try{
+    if(d.id){
+      data.log = [...(d.log || []), { by: S.me, at: now, act: '修改' }].slice(-30);
+      await DB.put('orders', d.id, data);
+    }else{
+      data.createdBy = S.me; data.createdAt = now; data.log = [{ by: S.me, at: now, act: '新增' }];
+      await DB.add('orders', data);
+    }
+    closeModal(); toast('已儲存');
+  }catch(e){ console.error(e); d._err = '儲存失敗：' + (e.code || e.message); rerenderModal(); }
+}
+
+async function changeStatus(id, st, extra = {}){
+  const o = S.orders.find(x => x.id === id); if(!o) return;
+  if(st === 'done' && !o.paid && !extra._confirmed) return askPayment(o);
+  delete extra._confirmed;
+  const now = Date.now();
+  const act = '狀態：' + (st === 'done' ? (o.method === 'delivery' ? '已出貨' : '已取貨') : STATUS[st]) + (extra.paid ? `（收款：${extra.payMethod}）` : '');
+  try{
+    await DB.patch('orders', id, { status: st, ...extra, updatedBy: S.me, updatedAt: now, log: [...(o.log || []), { by: S.me, at: now, act }].slice(-30) });
+    toast(act.replace('狀態：', ''));
+  }catch(e){ toast('更新失敗：' + (e.code || e.message)); }
+}
+let payDraft = null;
+function askPayment(o){
+  payDraft = { id: o.id, method: '', transferDate: today(), last5: '', err: '' };
+  openModal('這筆訂單尚未付款', () => `
+    <div class="alert red"><b>${esc(o.name)}　${fmtPhone(o.phone)}</b>交付前請向客人收款，選擇收款方式：</div>
+    <div class="seg">${PAY_METHODS.filter(m => m !== '官網付款').map(m => `<button class="${payDraft.method === m ? 'on' : ''}" data-act="pay-m" data-v="${m}">${m}</button>`).join('')}</div>
+    ${payDraft.method === '匯款/轉帳' ? `<div class="two" style="margin-top:10px"><div class="f"><label>匯款日期</label><input type="date" data-pk="transferDate" value="${payDraft.transferDate}"></div>
+      <div class="f"><label>帳號末五碼</label><input type="text" inputmode="numeric" maxlength="5" data-pk="last5" value="${esc(payDraft.last5)}"></div></div>` : ''}
+    ${payDraft.err ? `<div class="err">${esc(payDraft.err)}</div>` : ''}`,
+    `<button class="btn" data-act="pay-skip">先不收款，仍完成</button><button class="btn pri" data-act="pay-ok">已收款並完成</button>`);
+}
+
+/* ============================================================
+   Settings: product / pack / box / mapping editors
+   ============================================================ */
+let sdraft = null;
+function openProduct(id){
+  const p = id ? S.pm[id] : null;
+  sdraft = p ? clean(p) : { name: '', series: '雪球', unit: '顆', std: 20, order: (S.products.length + 1), batch: null, active: true };
+  sdraft._batch = !!sdraft.batch?.size;
+  const series = [...new Set(S.products.map(x => x.series))];
+  openModal(p ? '編輯品項' : '新增品項', () => `
+    <div class="f"><label>品項名稱</label><input type="text" data-sk="name" value="${esc(sdraft.name)}"></div>
+    <div class="two"><div class="f"><label>系列</label><input type="text" list="serieslist" data-sk="series" value="${esc(sdraft.series)}">
+      <datalist id="serieslist">${series.map(s => `<option value="${esc(s)}">`).join('')}</datalist></div>
+      <div class="f"><label>統計單位</label><input type="text" data-sk="unit" value="${esc(sdraft.unit)}" placeholder="顆／片／個"></div></div>
+    <div class="two"><div class="f"><label>標準罐（或整條）數量</label><input type="number" data-sk="std" value="${sdraft.std}"></div>
+      <div class="f"><label>排序</label><input type="number" data-sk="order" value="${sdraft.order}"></div></div>
+    <label class="chk"><input type="checkbox" data-sk="_batch" ${sdraft._batch ? 'checked' : ''}>需要換算烘烤單位（例如磅蛋糕 9 片 = 1 條）</label>
+    ${sdraft._batch ? `<div class="two"><div class="f"><label>幾${esc(sdraft.unit)}為一個單位</label><input type="number" data-sk="batch.size" value="${sdraft.batch?.size || 9}"></div>
+      <div class="f"><label>單位名稱</label><input type="text" data-sk="batch.label" value="${esc(sdraft.batch?.label || '條')}"></div></div>` : ''}
+    <label class="chk"><input type="checkbox" data-sk="active" ${sdraft.active !== false ? 'checked' : ''}>上架中（停用後不會出現在選單，舊訂單不受影響）</label>
+    ${sdraft._err ? `<div class="err">${esc(sdraft._err)}</div>` : ''}`,
+    `${p ? `<button class="btn danger" data-act="prod-del" data-id="${id}">刪除</button>` : ''}<button class="btn pri" data-act="prod-save" data-id="${id || ''}">儲存</button>`);
+}
+async function saveProduct(id){
+  const d = sdraft;
+  if(!d.name.trim() || !d.unit.trim() || !(Number(d.std) > 0)){ d._err = '請填名稱、單位和標準數量'; return rerenderModal(); }
+  const data = { name: d.name.trim(), series: d.series.trim() || '其他', unit: d.unit.trim(), std: Number(d.std), order: Number(d.order) || 999,
+    batch: d._batch ? { size: Number(d.batch?.size) || 9, label: d.batch?.label || '條' } : null, active: d.active !== false };
+  id ? await DB.put('products', id, data) : await DB.add('products', data);
+  closeModal(); toast('已儲存');
+}
+function openPack(id){
+  const k = id ? S.km[id] : null;
+  sdraft = k ? clean(k) : { name: '', useStd: false, size: 5, order: S.packs.length + 1 };
+  openModal(k ? '編輯包裝規格' : '新增包裝規格', () => `
+    <div class="f"><label>名稱</label><input type="text" data-sk="name" value="${esc(sdraft.name)}" placeholder="例如：小罐10顆"></div>
+    <label class="chk"><input type="checkbox" data-sk="useStd" ${sdraft.useStd ? 'checked' : ''}>數量依各品項的標準罐（例如鹹蛋 20、包心巧克力 18）</label>
+    ${sdraft.useStd ? '' : `<div class="f"><label>每包數量</label><input type="number" data-sk="size" value="${sdraft.size}"></div>`}
+    <div class="f"><label>排序</label><input type="number" data-sk="order" value="${sdraft.order}"></div>
+    ${sdraft._err ? `<div class="err">${esc(sdraft._err)}</div>` : ''}`,
+    `${k ? `<button class="btn danger" data-act="pack-del" data-id="${id}">刪除</button>` : ''}<button class="btn pri" data-act="pack-save" data-id="${id || ''}">儲存</button>`);
+}
+async function savePack(id){
+  const d = sdraft;
+  if(!d.name.trim() || (!d.useStd && !(Number(d.size) > 0))){ d._err = '請填名稱和每包數量'; return rerenderModal(); }
+  const data = { name: d.name.trim(), useStd: !!d.useStd, size: d.useStd ? 0 : Number(d.size), order: Number(d.order) || 99 };
+  id ? await DB.put('packs', id, data) : await DB.add('packs', data);
+  closeModal(); toast('已儲存');
+}
+function openBox(id){
+  const b = id ? S.bm[id] : null;
+  sdraft = b ? clean(b) : { name: '', items: [], active: true };
+  openModal(b ? '編輯禮盒組合' : '新增禮盒組合', () => {
+    const tot = aggregate([{ lines: [{ kind: 'box', qty: 1, items: sdraft.items.filter(i => i.productId && i.packId).map(i => snapItem(i.productId, i.packId, i.qty)) }] }]);
+    return `<div class="f"><label>組合名稱（例如：客製化禮盒1、中秋禮盒（全雪球））</label><input type="text" data-sk="name" value="${esc(sdraft.name)}"></div>
+      <div class="box"><div class="bt">每盒內容</div>
+      ${sdraft.items.map((it, i) => `<div class="line"><div class="lr"><select data-bline="${i}" data-lf="productId">${productOptions(it.productId)}</select>
+        <select data-bline="${i}" data-lf="packId">${packOptions(it.packId, it.productId)}</select>
+        <input type="number" min="0" inputmode="numeric" data-bline="${i}" data-lf="qty" value="${it.qty}"><button class="x" data-act="bline-del" data-v="${i}">×</button></div></div>`).join('')}
+      <button class="btn sm" data-act="bline-add">＋ 加入品項</button>
+      ${tot.length ? `<div class="hint" style="margin-top:8px;font-size:14px">每盒合計：${tot.map(a => `${esc(a.name)} ${a.units}${esc(a.unit)}`).join('、')}</div>` : ''}</div>
+      <label class="chk"><input type="checkbox" data-sk="active" ${sdraft.active !== false ? 'checked' : ''}>使用中</label>
+      <p class="sum">修改組合內容不會影響已登記的訂單。</p>
+      ${sdraft._err ? `<div class="err">${esc(sdraft._err)}</div>` : ''}`;
+  }, `${b ? `<button class="btn danger" data-act="box-del" data-id="${id}">刪除</button>` : ''}<button class="btn pri" data-act="box-save" data-id="${id || ''}">儲存</button>`);
+}
+async function saveBox(id){
+  const d = sdraft;
+  const items = d.items.filter(i => i.productId && i.packId && Number(i.qty) > 0).map(i => ({ productId: i.productId, packId: i.packId, qty: Number(i.qty) }));
+  if(!d.name.trim() || !items.length){ d._err = '請填名稱並至少加入一個品項'; return rerenderModal(); }
+  const data = { name: d.name.trim(), items, active: d.active !== false };
+  id ? await DB.put('boxes', id, data) : await DB.add('boxes', data);
+  closeModal(); toast('已儲存');
+}
+function mapSelect(attr, cur){
+  const boxes = [...S.boxes].filter(b => b.active !== false).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  const std = [...S.packs].sort(byOrder).find(k => k.useStd) || [...S.packs].sort(byOrder)[0];
+  const prods = [...S.products].filter(p => p.active !== false).sort(byOrder);
+  return `<select ${attr}><option value="">— 選擇對應 —</option>
+    <optgroup label="禮盒組合">${boxes.map(b => `<option value="box:${b.id}" ${cur === 'box:' + b.id ? 'selected' : ''}>${esc(b.name)}</option>`).join('')}</optgroup>
+    <optgroup label="單品（${esc(std?.name || '')}）">${prods.map(p => `<option value="item:${p.id}:${std?.id}" ${cur === `item:${p.id}:${std?.id}` ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</optgroup></select>`;
+}
+const mapVal = m => m ? (m.kind === 'box' ? 'box:' + m.boxId : `item:${m.productId}:${m.packId}`) : '';
+function valToMap(v){ const [kind, a, b] = v.split(':'); return kind === 'box' ? { kind, boxId: a } : { kind, productId: a, packId: b }; }
+const mapId = key => 'm-' + Array.from(new TextEncoder().encode(key)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 300);
+function openMapping(id){
+  const m = S.mappings.find(x => x.id === id);
+  sdraft = { v: mapVal(m) };
+  openModal('官網商品對應', () => `<div class="f"><label>官網商品名稱</label><div>${esc(m.key)}</div></div>
+    <div class="f"><label>對應到</label>${mapSelect('data-sk="v"', sdraft.v)}</div>
+    <p class="sum">沒有合適的選項？先到「禮盒組合」建立，再回來對應。</p>`,
+    `<button class="btn danger" data-act="map-del" data-id="${id}">刪除</button><button class="btn pri" data-act="map-save" data-id="${id}">儲存</button>`);
+}
+
+/* ============================================================
+   官網 Excel import
+   ============================================================ */
+let imp = null;
+function openImport(){
+  imp = { step: 'pick', rows: [], maps: {}, err: '', busy: false };
+  openModal('匯入官網 Excel', importBody, () => imp.step === 'preview'
+    ? `<div class="mf"><button class="btn" data-act="close">取消</button><button class="btn pri" data-act="imp-go" ${imp.busy ? 'disabled' : ''}>匯入 ${impReady().length} 筆</button></div>` : '');
+}
+function impReady(){ return imp.rows.filter(r => !r.exists && r.shipDate && r.items.every(i => imp.maps[i.key])); }
+function importBody(){
+  if(imp.step === 'pick') return `<p>請到官網後台匯出「訂單報表」Excel，再選擇檔案：</p>
+    <input type="file" id="impFile" accept=".xlsx,.xls,.csv">
+    ${imp.err ? `<div class="err">${esc(imp.err)}</div>` : ''}
+    <p class="sum">系統會讀取：購買人、電話、商品名稱（括號內日期＝出貨日）、數量、運費（＞0 為宅配）、付款狀態、訂單編號、備註。<br>同一個訂單編號重複匯入不會建立兩次。</p>`;
+  const keys = [...new Set(imp.rows.filter(r => !r.exists).flatMap(r => r.items.map(i => i.key)))];
+  const unmapped = keys.filter(k => !S.mappings.find(m => m.key === k));
+  const ready = impReady();
+  return `
+    ${unmapped.length || keys.length ? `<div class="box"><div class="bt">官網商品對應</div>
+      ${keys.map(k => `<div class="f"><label>${esc(k)}${unmapped.includes(k) ? ' <b style="color:var(--amber)">（新商品，請對應）</b>' : ''}</label>
+        ${mapSelect(`data-impmap="${esc(k)}"`, mapVal(imp.maps[k]))}</div>`).join('')}
+      <p class="sum">對應會被記住，下次自動套用。沒有合適的選項，請先到「設定 → 禮盒組合」建立。</p></div>` : ''}
+    <div class="sum">共 ${imp.rows.length} 筆：可匯入 <b>${ready.length}</b>、已匯入過 ${imp.rows.filter(r => r.exists).length}、待處理 ${imp.rows.length - ready.length - imp.rows.filter(r => r.exists).length}</div>
+    ${imp.rows.map((r, i) => {
+      const warn = !r.exists && (!r.shipDate || r.dateConflict || r.items.some(it => !imp.maps[it.key]));
+      const bg = r.exists ? 'background:#f1efec;color:#999' : warn ? 'background:var(--amber-bg);border-color:#ecd28c' : '';
+      return `<div class="card" style="${bg}">
+        <div class="l1" style="display:flex;justify-content:space-between;gap:8px"><b>${esc(r.name)}　${fmtPhone(r.phone)}</b><span style="font-size:13px">${esc(r.cyberId)}${r.exists ? '・已匯入過' : ''}</span></div>
+        <div class="badges"><span class="b">${r.method === 'delivery' ? '宅配' : '自取'}</span>${r.am ? '<span class="b amber">早上取貨</span>' : ''}
+          ${r.paid ? '<span class="b ok">已付款</span>' : '<span class="b red">未付款</span>'}${r.taxId ? `<span class="b amber">收據 ${r.taxId}</span>` : ''}</div>
+        <div style="margin-top:6px;font-size:14.5px">${r.items.map(it => `${esc(it.key)} × ${it.qty}${imp.maps[it.key] ? '' : ' <b style="color:var(--amber)">（未對應）</b>'}`).join('<br>')}</div>
+        ${r.note ? `<div style="font-size:13.5px;color:var(--muted);margin-top:4px">備註：${esc(r.note)}</div>` : ''}
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:14px">出貨日
+          ${r.exists ? fmtDate(r.shipDate) : `<input type="date" data-impdate="${i}" value="${r.shipDate}" style="padding:5px 8px;border:1px solid var(--line);border-radius:8px">${r.dateConflict ? '<small>商品日期不一致，請確認</small>' : ''}`}</div>
+      </div>`;
+    }).join('')}
+    <p class="sum">黃色列需要補日期或商品對應才能匯入。備註裡的統編會自動填入「收據」，提到早上取貨會標成早上；匯入後仍可在訂單中修改。</p>
+    ${imp.err ? `<div class="err">${esc(imp.err)}</div>` : ''}`;
+}
+async function handleImportFile(file){
+  try{
+    if(!window.XLSX) throw new Error('Excel 元件尚未載入，請重新整理');
+    const wb = XLSX.read(await file.arrayBuffer(), { type: 'array', raw: false });
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '', raw: false });
+    const parsed = parseCyber(rows);
+    if(!parsed.length) throw new Error('檔案中沒有訂單資料');
+    const exists = await Promise.all(parsed.map(r => DB.get('orders', r.docId).catch(() => null)));
+    parsed.forEach((r, i) => { r.exists = !!exists[i]; if(r.exists) r.shipDate = exists[i].shipDate; });
+    imp.rows = parsed;
+    imp.maps = {};
+    parsed.flatMap(r => r.items).forEach(i => { const m = S.mappings.find(x => x.key === i.key); if(m) imp.maps[i.key] = m; });
+    imp.step = 'preview'; imp.err = '';
+  }catch(e){ console.error(e); imp.err = e.message; }
+  rerenderModal();
+}
+async function runImport(){
+  const ready = impReady(); if(!ready.length) return;
+  imp.busy = true; rerenderModal();
+  const now = Date.now();
+  const items = [];
+  const usedKeys = new Set(ready.flatMap(r => r.items.map(i => i.key)));
+  usedKeys.forEach(k => { const m = imp.maps[k]; const old = S.mappings.find(x => x.key === k);
+    if(!old || mapVal(old) !== mapVal(m)) items.push({ col: 'mappings', id: old?.id || mapId(k), data: { key: k, ...valToMap(mapVal(m)) } }); });
+  for(const r of ready){
+    const lines = r.items.map(it => {
+      const m = imp.maps[it.key];
+      return m.kind === 'box'
+        ? { kind: 'box', boxId: m.boxId, boxName: S.bm[m.boxId]?.name || '', qty: it.qty, items: snapBox(m.boxId) }
+        : { kind: 'item', ...snapItem(m.productId, m.packId, it.qty) };
+    });
+    items.push({ col: 'orders', id: r.docId, data: {
+      type: 'regular', source: '官網', name: r.name, phone: r.phone, shipDate: r.shipDate, method: r.method, slot: r.am && r.method === 'pickup' ? 'am' : 'pm',
+      lines, card: { need: false, text: '' }, receipt: { need: !!r.taxId, taxId: r.taxId || '' },
+      paid: r.paid, payMethod: r.paid ? '官網付款' : '', transferDate: '', last5: '', status: 'todo', note: r.note, cyberId: r.cyberId,
+      createdBy: S.me, createdAt: now, updatedBy: S.me, updatedAt: now, log: [{ by: S.me, at: now, act: '官網匯入' }] } });
+  }
+  try{
+    await DB.putMany(items);
+    const range = ready.map(r => r.shipDate).sort();
+    if(range[0] < S.windowFrom){ S.windowFrom = null; subscribeOrders(); }
+    closeModal(); toast(`已匯入 ${ready.length} 筆訂單`);
+  }catch(e){ imp.busy = false; imp.err = '匯入失敗：' + (e.code || e.message); rerenderModal(); }
+}
+
+/* ============================================================
+   Export / history
+   ============================================================ */
+function exportExcel(){
+  if(!window.XLSX) return toast('Excel 元件尚未載入');
+  const os = rangeOrders().filter(o => o.status !== 'cancel').sort((a, b) => a.shipDate.localeCompare(b.shipDate));
+  const lineText = o => (o.lines || []).map(l => l.kind === 'box'
+    ? `${l.boxName}×${l.qty}【${(l.items || []).map(i => `${i.productName}${i.packName}×${i.qty}`).join('、')}】`
+    : `${l.productName}${l.packName}×${l.qty}`).join('；');
+  const rows = os.map(o => ({
+    出貨日: o.shipDate, 類型: TYPES[o.type]?.label, 狀態: statusText(o), 姓名: o.name, 電話: o.phone, 來源: o.source,
+    取貨方式: o.method === 'delivery' ? '宅配' : '自取', 時段: o.slot === 'am' ? '早上' : '下午', 品項: lineText(o),
+    小卡: o.card?.need ? (o.card.text || '需要') : '', 收據統編: o.receipt?.need ? (o.receipt.taxId || '需要') : '',
+    付款: o.paid ? '已付款' : '未付款', 付款方式: o.payMethod || '', 匯款日期: o.transferDate || '', 末五碼: o.last5 || '',
+    官網編號: o.cyberId || '', 備註: o.note || '', 建立: o.createdBy || '', 最後修改: `${o.updatedBy || ''} ${fmtTime(o.updatedAt)}` }));
+  const agg = aggregate(os.filter(o => o.status === 'todo'));
+  const k = agg.map(a => ({ 系列: a.series, 品項: a.name, 數量: a.units, 單位: a.unit, 烘烤: a.batch?.size ? `${Math.ceil(a.units / a.batch.size)}${a.batch.label}` : '' }));
+  const p = agg.flatMap(a => [...a.packs.values()].map(x => ({ 品項: a.name, 包裝: packLabel(x.name, x.size, a.unit), 個數: x.count })));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows.length ? rows : [{ 出貨日: '無資料' }]), '訂單');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(k.length ? k : [{ 品項: '無' }]), '內場統計(待製作)');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(p.length ? p : [{ 品項: '無' }]), '包裝統計(待製作)');
+  XLSX.writeFile(wb, `半吊子訂單_${S.range.from}_${S.range.to}.xlsx`);
+}
+async function showHistory(phone){
+  const list = (await DB.whereEq('orders', 'phone', phone)).sort((a, b) => b.shipDate.localeCompare(a.shipDate));
+  openModal(`歷史訂單 ${fmtPhone(phone)}`, () => list.length ? `<p class="sum">共 ${list.length} 筆</p>` + list.map(o => orderCard(o, { showDate: true })).join('') : '<div class="empty">沒有紀錄</div>');
+}
+
+/* ============================================================
+   Events
+   ============================================================ */
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-act]'); if(!el) return;
+  const a = el.dataset.act, v = el.dataset.v, id = el.dataset.id;
+  switch(a){
+    case 'login': return doLogin();
+    case 'pick-me': S.me = v; LS.set('hk-me', v); return render();
+    case 'who': S.me = ''; LS.set('hk-me', ''); return render();
+    case 'tab': S.tab = v; LS.set('hk-tab', v); window.scrollTo(0, 0); return render();
+    case 'range': S.range = { from: el.dataset.f, to: el.dataset.t }; saveRange(); subscribeOrders(); return render();
+    case 'ffilter': S.fieldFilter = v; return render();
+    case 'past': S.ordersPast = !S.ordersPast; return render();
+    case 'new': return openOrderForm(null);
+    case 'edit': { const o = S.orders.find(x => x.id === id); if(o) openOrderForm(o); return; }
+    case 'status': return changeStatus(id, v);
+    case 'import': return openImport();
+    case 'export': return exportExcel();
+    case 'history': return showHistory(v);
+    case 'close': return closeModal();
+    case 'set': {
+      let val = v; if(el.dataset.path === 'paid') val = v === 'true';
+      setPath(draft, el.dataset.path, val);
+      if(el.dataset.path === 'paid' && val && !draft.payMethod) draft.payMethod = '';
+      return rerenderModal();
+    }
+    case 'line-add':
+      draft.lines.push(v === 'box' ? { kind: 'box', boxId: '', qty: 1, _fresh: true } : { kind: 'item', productId: '', packId: defaultPack(), qty: 1 });
+      return rerenderModal();
+    case 'line-del': draft.lines.splice(+v, 1); return rerenderModal();
+    case 'save-order': return saveOrder();
+    case 'pay-m': payDraft.method = v; return rerenderModal();
+    case 'pay-skip': { const pid = payDraft.id; closeModal(); return changeStatus(pid, 'done', { _confirmed: true }); }
+    case 'pay-ok': {
+      const p = payDraft;
+      if(!p.method){ p.err = '請選收款方式'; return rerenderModal(); }
+      if(p.method === '匯款/轉帳' && !/^\d{5}$/.test(p.last5)){ p.err = '請填帳號末五碼'; return rerenderModal(); }
+      closeModal();
+      return changeStatus(p.id, 'done', { _confirmed: true, paid: true, payMethod: p.method, transferDate: p.method === '匯款/轉帳' ? p.transferDate : '', last5: p.method === '匯款/轉帳' ? p.last5 : '' });
+    }
+    /* settings */
+    case 'staff-add': { const n = $('#newStaff').value.trim(); if(!n || S.config.staff.includes(n)) return; await DB.patch('config', 'main', { staff: [...S.config.staff, n] }); return; }
+    case 'staff-del': if(S.config.staff.length <= 1) return toast('至少要保留一位夥伴');
+      if(!confirmInline(el, `移除 ${v}？`)) return; await DB.patch('config', 'main', { staff: S.config.staff.filter(x => x !== v) }); return;
+    case 'src-add': { const n = $('#newSrc').value.trim(); if(!n || S.config.sources.includes(n)) return; await DB.patch('config', 'main', { sources: [...S.config.sources, n] }); return; }
+    case 'src-del': if(!confirmInline(el, `移除 ${v}？`)) return; await DB.patch('config', 'main', { sources: S.config.sources.filter(x => x !== v) }); return;
+    case 'pass-set': { const n = $('#newPass').value.trim(); if(n.length < 4) return toast('通行碼至少 4 碼');
+      try{ await DB.setPasscode(n); $('#newPass').value = ''; toast('通行碼已更新'); }catch(err){ toast('更新失敗：' + (err.code || err.message)); } return; }
+    case 'prod-edit': return openProduct(id);
+    case 'prod-save': return saveProduct(id);
+    case 'prod-del': if(!confirmInline(el, '確定刪除？')) return; await DB.remove('products', id); closeModal(); return toast('已刪除');
+    case 'pack-edit': return openPack(id);
+    case 'pack-save': return savePack(id);
+    case 'pack-del': if(!confirmInline(el, '確定刪除？')) return; await DB.remove('packs', id); closeModal(); return toast('已刪除');
+    case 'box-edit': return openBox(id);
+    case 'box-save': return saveBox(id);
+    case 'box-del': if(!confirmInline(el, '確定刪除？')) return; await DB.remove('boxes', id); closeModal(); return toast('已刪除');
+    case 'bline-add': sdraft.items.push({ productId: '', packId: defaultPack(), qty: 1 }); return rerenderModal();
+    case 'bline-del': sdraft.items.splice(+v, 1); return rerenderModal();
+    case 'map-edit': return openMapping(id);
+    case 'map-save': { if(!sdraft.v) return; const m = S.mappings.find(x => x.id === id); await DB.put('mappings', id, { key: m.key, ...valToMap(sdraft.v) }); closeModal(); return toast('已儲存'); }
+    case 'map-del': if(!confirmInline(el, '確定刪除？')) return; await DB.remove('mappings', id); closeModal(); return;
+    case 'imp-go': return runImport();
+  }
+});
+/* two-tap confirm without browser dialogs */
+function confirmInline(el, msg){
+  if(el.dataset.armed === '1') return true;
+  el.dataset.armed = '1'; const old = el.textContent; el.textContent = msg; el.classList.add('danger');
+  setTimeout(() => { if(el.isConnected){ el.dataset.armed = ''; el.textContent = old; } }, 3000);
+  return false;
+}
+
+function onField(e){
+  const el = e.target;
+  if(el.id === 'rf' || el.id === 'rt'){
+    if(e.type !== 'change' || !el.value) return;
+    const f = $('#rf').value, t = $('#rt').value;
+    S.range = f <= t ? { from: f, to: t } : { from: t, to: f };
+    saveRange(); subscribeOrders(); return render();
+  }
+  if(e.isComposing) return;
+  if(el.id === 'oq'){ S.ordersQ = el.value; const pos = el.selectionStart; render(); const n = $('#oq'); n.focus(); n.setSelectionRange(pos, pos); return; }
+  if(el.id === 'impFile' && e.type === 'change' && el.files[0]) return handleImportFile(el.files[0]);
+  const val = el.type === 'checkbox' ? el.checked : el.value;
+  if(el.dataset.k && draft){
+    setPath(draft, el.dataset.k, val);
+    if(el.type === 'checkbox') rerenderModal();
+    return;
+  }
+  if(el.dataset.line != null && draft){
+    const l = draft.lines[+el.dataset.line]; const f = el.dataset.lf;
+    l[f] = f === 'qty' ? val : val;
+    if(f === 'boxId'){ l._fresh = true; }
+    if(e.type === 'change' && f !== 'qty') rerenderModal();
+    if(f === 'qty' && e.type === 'change') rerenderModal();
+    return;
+  }
+  if(el.dataset.bline != null && sdraft){
+    sdraft.items[+el.dataset.bline][el.dataset.lf] = val;
+    if(e.type === 'change') rerenderModal();
+    return;
+  }
+  if(el.dataset.sk && sdraft){
+    setPath(sdraft, el.dataset.sk, val);
+    if(el.type === 'checkbox') rerenderModal();
+    return;
+  }
+  if(el.dataset.pk && payDraft){ payDraft[el.dataset.pk] = val; return; }
+  if(el.dataset.impmap != null && imp && e.type === 'change'){
+    const k = el.dataset.impmap; if(val) imp.maps[k] = { key: k, ...valToMap(val) }; else delete imp.maps[k];
+    return rerenderModal();
+  }
+  if(el.dataset.impdate != null && imp && e.type === 'change'){ imp.rows[+el.dataset.impdate].shipDate = val; imp.rows[+el.dataset.impdate].dateConflict = false; return rerenderModal(); }
+}
+document.addEventListener('input', onField);
+document.addEventListener('change', onField);
+document.addEventListener('compositionend', e => onField({ target: e.target, type: 'input' }));
+document.addEventListener('click', e => { if(e.target.id === 'modal') closeModal(); });
+
+/* ---------- demo sample data ---------- */
+function demoOrders(products){
+  const t = today(), now = Date.now();
+  const it = (pid, kid, qty) => {
+    const p = products.find(x => x.id === pid); const k = seedData().packs.find(x => x.id === kid);
+    return { kind: 'item', productId: pid, productName: p.name, unit: p.unit, packId: kid, packName: k.name, packSize: k.useStd ? p.std : k.size, qty };
+  };
+  const box = (name, qty, items) => ({ kind: 'box', boxId: '', boxName: name, qty, items: items.map(x => { const { kind, ...r } = x; return r; }) });
+  const O = (name, phone, d, extra) => ({ type: 'regular', source: '官方LINE', name, phone, shipDate: addDays(t, d), method: 'pickup', slot: 'pm',
+    card: { need: false, text: '' }, receipt: { need: false, taxId: '' }, paid: true, payMethod: 'LINE Pay', transferDate: '', last5: '', status: 'todo', note: '',
+    createdBy: 'KS', createdAt: now, updatedBy: 'KS', updatedAt: now, log: [{ by: 'KS', at: now, act: '新增' }], lines: [], ...extra });
+  const list = [
+    O('羅心英', '0958797797', 0, { slot: 'am', paid: false, payMethod: '', lines: [it('p01', 'k1', 6), it('p05', 'k1', 1), it('p06', 'k1', 1), it('p09', 'k1', 2)] }),
+    O('張立佑', '0912345678', 1, { type: 'custom', source: '電話', card: { need: true, text: '祝 生日快樂！' }, payMethod: '匯款/轉帳', transferDate: t, last5: '12345',
+      lines: [box('客製化禮盒1', 10, [it('p01', 'k4', 1), it('p05', 'k5', 1), it('p12', 'k6', 1)])] }),
+    O('陳品瑜', '0921393409', 1, { source: 'IG', paid: false, payMethod: '', receipt: { need: true, taxId: '89839297' }, lines: [it('p01', 'k1', 2), it('p10', 'k1', 1)] }),
+    O('某某咖啡', '035551234', 2, { type: 'pr', source: '其他', note: '合作夥伴試吃', lines: [it('p02', 'k5', 10), it('p08', 'k5', 10)] }),
+    O('邱宇璇', '0919103902', 2, { method: 'delivery', source: '官網', payMethod: '官網付款', cyberId: '#1929', lines: [it('p01', 'k1', 3), it('p13', 'k1', 1)] })
+  ];
+  return list.map((d, i) => ({ col: 'orders', id: 'demo' + i, data: d }));
+}
+
+boot();
+</script>
+</body>
+</html>
