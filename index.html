@@ -56,7 +56,13 @@ h2.sec{font-size:15px;color:var(--brown);margin:18px 0 8px;letter-spacing:.05em}
 .t-regular{background:var(--reg-bg);border-color:var(--reg-bd)}
 .t-custom{background:var(--cus-bg);border-color:var(--cus-bd)}
 .t-pr{background:var(--pr-bg);border-color:var(--pr-bd)}
-.oc.st-done,.oc.st-cancel{background:#f1efec;border-color:#c9c2b9;color:#7d746b}
+.oc.st-done,.oc.st-cancel{background:#f1efec !important;border-color:#c9c2b9 !important;color:#7d746b}
+.b.orange{background:#fff1e0;color:#c26a00;border-color:#f3c78f;font-weight:700}
+.line .lr.pay{grid-template-columns:1fr 96px 36px}
+.line .lr2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.two>*{min-width:0}
+.paysum{font-size:14px;margin-top:6px}
+.seg button.on.ty{color:#fff}
 .oc .l1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .oc .nm{font-size:18px;font-weight:700}
 .oc .ph{color:var(--blue);text-decoration:none;font-variant-numeric:tabular-nums}
@@ -148,6 +154,49 @@ tr.skip td{color:#aaa}
 .who button{padding:16px;font-size:20px;border-radius:12px;border:1px solid var(--line);background:#fff}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:15px;z-index:60;display:none;max-width:90vw}
 details summary{cursor:pointer;color:var(--brown);font-size:14px}
+/* calendar */
+.cal-head{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:8px 10px;position:sticky;top:48px;z-index:15;border-bottom:1px solid var(--line)}
+.cal-head b{font-size:17px}
+.cal-head button{border:0;background:none;font-size:22px;color:var(--muted);padding:2px 12px}
+.cal-head .tdy{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:3px 10px;padding:6px 10px 8px;background:#fff;font-size:11.5px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px;vertical-align:-1px}
+.cal{background:#fff;margin:0 -16px}
+.cal-wd{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));font-size:11px;color:var(--muted);text-align:center;padding:3px 0;border-top:1px solid var(--line)}
+.wrow{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid #eee5da}
+.cc{min-width:0;overflow:hidden;min-height:74px;padding:2px 2px 4px;border-right:1px solid #f4ede5;font-size:10px;cursor:pointer}
+.cc:last-child{border-right:0}
+.cc .cd{display:flex;justify-content:center;align-items:center;height:18px;font-size:12px;position:relative}
+.cc .cd span{display:inline-block;min-width:19px;height:19px;line-height:19px;text-align:center;border-radius:50%}
+.cc.out .cd{color:#cbc1b6}.cc.sun .cd{color:#d14343}.cc.sat .cd{color:#3a6ea5}
+.cc.tdy .cd span{background:var(--ink);color:#fff}
+.cc.sel{background:#fff4dc}
+.cc .ldb{font-size:9.5px;color:var(--muted);margin-top:2px;white-space:nowrap}
+.cc .ev1{white-space:nowrap;overflow:hidden;text-overflow:clip;border-left:3px solid;padding-left:2px;margin:1px 0;line-height:13px}
+.cc .more{color:var(--muted);font-size:9.5px}
+.cc .cnt{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px}
+.cc .cnt span{color:#fff;border-radius:4px;padding:0 4px;font-size:10.5px;font-weight:700;line-height:15px}
+.cbar{position:absolute;height:14px;line-height:14px;font-size:10px;color:#fff;border-radius:3px;padding:0 4px;white-space:nowrap;overflow:hidden;cursor:pointer;z-index:2}
+.dayp{background:#fff;margin:10px -16px 0;padding:10px 14px 14px;font-size:12.5px}
+.dayp h3{margin:0;font-size:16px}
+.dayp .dsum{font-size:12px;color:var(--muted);margin:2px 0 6px}
+.dayp .dacts{display:flex;gap:6px;margin:4px 0 4px}
+.dayp .sec{font-size:11px;color:var(--muted);margin:10px 0 2px;letter-spacing:.05em}
+.dayp .tg{font-size:11.5px;font-weight:700;margin:8px 0 1px;display:flex;align-items:center;gap:5px}
+.dayp .tg i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.drow{display:flex;gap:6px;align-items:baseline;padding:5px 0;border-bottom:1px dashed #eee5da;cursor:pointer}
+.drow .tag{color:#fff;border-radius:3px;padding:0 4px;font-size:10.5px;white-space:nowrap}
+.drow .nm{font-weight:700;white-space:nowrap;max-width:42%;overflow:hidden;text-overflow:ellipsis}
+.drow .it{color:#6b5f55;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drow .r{white-space:nowrap;font-size:11px}
+.drow.dim{opacity:.55}
+.fr{color:var(--red);font-weight:700}.fo{color:#c26a00;font-weight:700}.fm{color:var(--muted)}
+.pchips{display:flex;flex-wrap:wrap;gap:6px}
+.pchips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:14px}
+.pchips button.on{background:var(--brown);color:#fff;border-color:var(--brown)}
+.catrow{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.catrow i{width:22px;height:22px;border-radius:5px;flex:none}
+.catrow input{flex:1;padding:7px 9px;border:1px solid var(--line);border-radius:8px}
 .thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .thumb{position:relative;width:84px;height:84px;border-radius:8px;overflow:hidden;background:var(--soft);border:1px solid var(--line)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
@@ -212,11 +261,46 @@ const digits = s => String(s ?? '').replace(/\D/g, '');
 function toast(msg, ms = 2200){ const t = $('#toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => t.style.display = 'none', ms); }
 
 /* ---------- constants ---------- */
-const TYPES = {
-  regular: { label: '常態出貨', cls: 't-regular' },
-  custom:  { label: '客製禮盒', cls: 't-custom' },
-  pr:      { label: '公關品',   cls: 't-pr' }
-};
+/* 10 個顏色位置：訂單類型與行程類別共用，名稱可在設定修改 */
+const SLOT_COLORS = ['#43a047','#8e6bbf','#e8913a','#3a7bd5','#d64545','#00a3a3','#c2a000','#e05a9b','#7a6a5a','#5c6bc0'];
+const DEFAULT_CATS = ['常態出貨','客製禮盒','公關品','活動備貨','客製喜餅','請假','拜訪','展覽擺攤','店務',''];
+const LEGACY_TYPE = { regular: 0, custom: 1, pr: 2 };
+const LEGACY_LABEL = { regular: '常態出貨', custom: '客製禮盒', pr: '公關品' };
+const cats = () => Array.from({ length: 10 }, (_, i) => { const c = S.config?.cats; return c && c[i] != null ? c[i] : DEFAULT_CATS[i]; });
+const namedSlots = () => cats().map((l, i) => [i, l]).filter(([, l]) => l);
+function typeOf(o){
+  const slot = o.typeSlot ?? LEGACY_TYPE[o.type] ?? 0;
+  return { slot, color: SLOT_COLORS[slot], label: o.typeLabel || LEGACY_LABEL[o.type] || cats()[slot] || '未分類' };
+}
+function evType(e){ const slot = e.slot ?? 8; return { slot, color: SLOT_COLORS[slot], label: e.slotLabel || cats()[slot] || '行程' }; }
+const tint = c => c + '22';
+
+/* 金額與收款 */
+const numOr = v => (v === '' || v == null || isNaN(Number(v))) ? null : Number(v);
+const money = n => '$' + Math.round(n).toLocaleString();
+function paysOf(o){
+  if(Array.isArray(o.payments)) return o.payments;
+  return o.paid ? [{ date: o.transferDate || '', method: o.payMethod || '', amount: '', last5: o.last5 || '', refund: false }] : [];
+}
+const payVal = p => { const a = numOr(p.amount); return a == null ? null : (p.refund ? -Math.abs(a) : a); };
+function payState(o){
+  const pays = paysOf(o);
+  const vals = pays.map(payVal);
+  const received = vals.reduce((s, v) => s + (v || 0), 0);
+  const unknown = vals.some(v => v == null);
+  const amt = numOr(o.amount);
+  const lastIn = [...pays].reverse().find(p => !p.refund);
+  if(amt > 0){
+    const due = amt - received;
+    if(due < 0) return { kind: 'refund', paid: true, due, received, pays, text: '待退 ' + money(-due) };
+    if(due > 0 && !unknown) return { kind: 'owe', paid: false, due, received, pays, text: (received ? '尚欠 ' : '未付 ') + money(due) };
+    return { kind: 'ok', paid: true, due: 0, received, pays, text: '已結清' };
+  }
+  if(pays.some(p => !p.refund)) return { kind: 'ok', paid: true, due: 0, received, pays, text: '已付款' + (lastIn?.method ? '・' + lastIn.method : '') };
+  if(/備貨|公關/.test(typeOf(o).label)) return { kind: 'na', paid: true, due: null, received, pays, text: '不需收款' };
+  return { kind: 'none', paid: false, due: null, received, pays, text: '未付款' };
+}
+const isPaid = o => payState(o).paid;
 const STATUS = { todo: '待製作', ready: '已備妥', done: '已完成', cancel: '已取消' };
 const statusText = o => o.status === 'done' ? (o.method === 'delivery' ? '已出貨' : '已取貨') : STATUS[o.status] || o.status;
 const PAY_METHODS = ['現金', 'LINE Pay', '街口', '匯款/轉帳', '官網付款'];
@@ -237,7 +321,7 @@ function seedData(){
     { id: 'k5', name: '3顆裝', useStd: false, size: 3, order: 5 },
     { id: 'k6', name: '單顆／單片裝', useStd: false, size: 1, order: 6 }
   ];
-  const config = { staff: ['KS','YH','YR','CT','YP'], sources: ['官方LINE','電話','官網','臉書','IG','其他'], seededAt: Date.now() };
+  const config = { staff: ['KS','YH','YR','CT','YP'], sources: ['官方LINE','電話','官網','臉書','IG','其他'], cats: DEFAULT_CATS, seededAt: Date.now() };
   return { products, packs, config };
 }
 
@@ -328,7 +412,8 @@ function demoDB(){
    ============================================================ */
 const S = {
   me: LS.get('hk-me', ''),
-  tab: LS.get('hk-tab', 'kitchen'),
+  tab: LS.get('hk-tab', 'cal'),
+  calMonth: today().slice(0, 8) + '01', calSel: today(), events: [],
   range: LS.get('hk-range', null) || { from: today(), to: today() },
   fieldFilter: 'open',
   ordersQ: '', ordersPast: false,
@@ -496,6 +581,7 @@ function start(){
   watch('packs', 'packs');
   watch('boxes', 'boxes');
   watch('mappings', 'mappings');
+  watch('events', 'events');
   subscribeOrders();
 }
 async function seed(){
@@ -509,7 +595,8 @@ async function seed(){
   await DB.putMany(items);
 }
 function subscribeOrders(){
-  const from = [addDays(today(), -60), S.range.from].sort()[0];
+  const calFrom = addDays(S.calMonth, -7);
+  const from = [addDays(today(), -60), S.range.from, calFrom].sort()[0];
   if(S.windowFrom && from >= S.windowFrom) return;
   S.windowFrom = from;
   S.offOrders?.();
@@ -520,7 +607,7 @@ function subscribeOrders(){
    Rendering
    ============================================================ */
 const TABS = [
-  ['kitchen', '內場', '🍪'], ['pack', '包裝', '📦'], ['field', '外場', '🛍'], ['orders', '訂單', '📝'], ['settings', '設定', '⚙']
+  ['cal', '行事曆', '📅'], ['kitchen', '內場', '🍪'], ['pack', '包裝', '📦'], ['field', '外場', '🛍'], ['orders', '訂單', '📝'], ['settings', '設定', '⚙']
 ];
 function render(){
   if(!S.config){ $('#app').innerHTML = `<div class="empty">載入中…</div>`; return; }
@@ -531,7 +618,7 @@ function render(){
     <header class="top"><h1>半吊子 訂單</h1>${DEMO ? '<span class="demo-flag">試用版</span>' : ''}
       <button class="me" data-act="who">${esc(S.me)}</button></header>
     ${showRange ? rangeBar() : ''}
-    <main>${({ kitchen: viewKitchen, pack: viewPack, field: viewField, orders: viewOrders, settings: viewSettings })[S.tab]()}</main>
+    <main>${({ cal: viewCal, kitchen: viewKitchen, pack: viewPack, field: viewField, orders: viewOrders, settings: viewSettings })[S.tab]()}</main>
     <nav class="tabs"><div class="in">${TABS.map(([k, l, ic]) =>
       `<button class="${S.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}"><span class="ic">${ic}</span>${l}</button>`).join('')}</div></nav>`;
   window.scrollTo(0, sy);
@@ -555,6 +642,167 @@ function rangeBar(){
     <div class="chips">${q.map(([l, f, to]) => `<button class="chip ${r.from === f && r.to === to ? 'on' : ''}" data-act="range" data-f="${f}" data-t="${to}">${l}</button>`).join('')}</div></div>`;
 }
 const rangeText = () => S.range.from === S.range.to ? fmtDate(S.range.from) : `${fmtDate(S.range.from)} ～ ${fmtDate(S.range.to)}`;
+
+/* ---------- 行事曆 ---------- */
+const daysBetween = (a, b) => Math.round((parseYmd(b) - parseYmd(a)) / 86400000);
+function occurrences(from, to){
+  const out = [];
+  for(const e of S.events){
+    if(!e.start) continue;
+    const end0 = e.end && e.end >= e.start ? e.end : e.start;
+    const dur = daysBetween(e.start, end0);
+    if(e.repeat === 'weekly'){
+      const until = e.repeatUntil || '9999-12-31';
+      let st = e.start;
+      const skip = Math.floor((daysBetween(e.start, from) - dur) / 7);
+      if(skip > 0) st = addDays(st, skip * 7);
+      for(let n = 0; st <= to && st <= until && n < 60; n++, st = addDays(st, 7)){
+        const en = addDays(st, dur); if(en >= from) out.push({ ev: e, start: st, end: en });
+      }
+    }else if(end0 >= from && e.start <= to) out.push({ ev: e, start: e.start, end: end0 });
+  }
+  return out.sort((a, b) => a.start.localeCompare(b.start) || daysBetween(b.start, b.end) - daysBetween(a.start, a.end));
+}
+const liveOrdersOn = d => S.orders.filter(o => o.shipDate === d && o.status !== 'cancel');
+function snowUnits(os){ return expand0(os).filter(x => (S.pm[x.productId]?.series || '') === '雪球').reduce((s, x) => s + x.units, 0); }
+const expand0 = os => os.flatMap(o => expand(o));
+function viewCal(){
+  const m0 = S.calMonth, first = parseYmd(m0);
+  const gs = addDays(m0, -first.getDay());
+  const lastD = ymd(new Date(first.getFullYear(), first.getMonth() + 1, 0));
+  const ge = addDays(lastD, 6 - parseYmd(lastD).getDay());
+  const occ = occurrences(gs, ge);
+  const t = today();
+  const used = new Set([...S.orders.filter(o => o.shipDate >= gs && o.shipDate <= ge && o.status !== 'cancel').map(o => typeOf(o).slot), ...occ.map(o => evType(o.ev).slot)]);
+  const oldLabel = i => { const o = S.orders.find(o => typeOf(o).slot === i); return o ? typeOf(o).label : null; } ;
+  const oldLabel2 = i => oldLabel(i) || occ.find(o => evType(o.ev).slot === i)?.ev.slotLabel || '（已移除）';
+  const legend = cats().map((l, i) => [i, l]).filter(([i, l]) => l || used.has(i))
+    .map(([i, l]) => `<span><i style="background:${SLOT_COLORS[i]}"></i>${esc(l || oldLabel2(i))}</span>`).join('');
+  let weeks = '';
+  for(let ws = gs; ws <= ge; ws = addDays(ws, 7)){
+    const we = addDays(ws, 6);
+    const multi = occ.filter(o => o.end > o.start && o.end >= ws && o.start <= we)
+      .map(o => ({ o, s: o.start < ws ? ws : o.start, e: o.end > we ? we : o.end }));
+    const lanes = [];
+    multi.forEach(b => { let l = 0; while(lanes[l] && lanes[l] >= b.s) l++; lanes[l] = b.e; b.lane = l; });
+    const nl = Math.min(lanes.length, 3);
+    let cells = '';
+    for(let i = 0; i < 7; i++){
+      const d = addDays(ws, i), dt = parseYmd(d);
+      const os = liveOrdersOn(d);
+      const cnt = {}; os.forEach(o => { const s = typeOf(o).slot; cnt[s] = (cnt[s] || 0) + 1; });
+      const singles = occ.filter(o => o.start === o.end && o.start === d);
+      const hidden = multi.filter(b => b.lane >= 3 && b.s <= d && b.e >= d).length;
+      const units = snowUnits(os);
+      cells += `<div class="cc ${d.slice(0, 7) !== m0.slice(0, 7) ? 'out' : ''} ${dt.getDay() === 0 ? 'sun' : ''} ${dt.getDay() === 6 ? 'sat' : ''} ${d === t ? 'tdy' : ''} ${d === S.calSel ? 'sel' : ''}" data-act="cal-day" data-v="${d}">
+        <div class="cd"><span>${dt.getDate()}</span></div>
+        <div style="height:${nl * 16}px"></div>
+        ${singles.slice(0, 2).map(o => { const ty = evType(o.ev); return `<div class="ev1" style="border-color:${ty.color}">${esc(o.ev.title)}</div>`; }).join('')}
+        ${singles.length + hidden > 2 ? `<div class="more">+${singles.length - Math.min(2, singles.length) + hidden}</div>` : ''}
+        ${os.length ? `<div class="cnt">${Object.keys(cnt).sort((a, b) => a - b).map(s => `<span style="background:${SLOT_COLORS[s]}">${cnt[s]}</span>`).join('')}</div>` : ''}
+        ${units ? `<div class="ldb">${units}顆</div>` : ''}
+      </div>`;
+    }
+    const bars = multi.filter(b => b.lane < 3).map(b => {
+      const c = daysBetween(ws, b.s), span = daysBetween(b.s, b.e) + 1, ty = evType(b.o.ev);
+      return `<div class="cbar" style="left:calc(${c} * 100% / 7 + 2px);width:calc(${span} * 100% / 7 - 4px);top:${20 + b.lane * 16}px;background:${ty.color}" data-act="ev-edit" data-id="${b.o.ev.id}">${esc(b.o.ev.title)}</div>`;
+    }).join('');
+    weeks += `<div class="wrow">${cells}${bars}</div>`;
+  }
+  return `<div class="cal">
+    <div class="cal-head"><button data-act="cal-mv" data-v="-1">‹</button><b>${first.getFullYear()}年${first.getMonth() + 1}月</b>
+      <span><button class="tdy" data-act="cal-today">今天</button><button data-act="cal-mv" data-v="1">›</button></span></div>
+    <div class="legend">${legend}</div>
+    <div class="cal-wd">${[...WD].map(w => `<div>${w}</div>`).join('')}</div>
+    ${weeks}</div>
+    ${dayPanel(S.calSel)}`;
+}
+function itemsBrief(o){
+  return (o.lines || []).map(l => l.kind === 'box' ? `${l.boxName || '禮盒'}×${l.qty}盒` : `${(l.productName || '').replace(/雪球$/, '')}${S.km[l.packId]?.useStd ? '' : l.packName}×${l.qty}`).join('、');
+}
+function dayPanel(d){
+  const os = liveOrdersOn(d);
+  const occ = occurrences(d, d);
+  const agg = aggregate(os);
+  const bySeries = {};
+  agg.forEach(a => { const k = a.series; (bySeries[k] ||= { units: 0, unit: a.unit }).units += a.units; });
+  const sum = [`訂單 ${os.length} 筆`, ...Object.entries(bySeries).map(([k, v]) => `${k} ${v.units} ${v.unit}`)].join('・');
+  const groups = {};
+  os.forEach(o => { const s = typeOf(o).slot; (groups[s] ||= []).push(o); });
+  const flags = o => {
+    const f = [], ps = payState(o);
+    if(ps.kind === 'owe' || ps.kind === 'none') f.push(`<span class="fr">${esc(ps.text)}</span>`);
+    else if(ps.kind === 'refund') f.push(`<span class="fo">${esc(ps.text)}</span>`);
+    if(o.slot === 'am' && o.method !== 'delivery') f.push('<span class="fr">早上</span>');
+    if(o.method === 'delivery') f.push('宅配');
+    if(o.card?.need) f.push('小卡');
+    if(o.receipt?.need) f.push('收據');
+    if(o.images?.length) f.push('📎');
+    if(o.status === 'ready') f.push('<span style="color:#2f6b33">✓備妥</span>');
+    if(o.status === 'done') f.push('<span class="fm">已完成</span>');
+    return f.join('・');
+  };
+  return `<div class="dayp">
+    <h3>${fmtDate(d)}</h3><div class="dsum">${sum}</div>
+    <div class="dacts"><button class="btn sm" data-act="ev-new" data-v="${d}">＋ 行程</button><button class="btn sm" data-act="new-on" data-v="${d}">＋ 訂單</button></div>
+    ${occ.length ? `<div class="sec">行程</div>${occ.map(o => { const ty = evType(o.ev), e = o.ev;
+      return `<div class="drow" data-act="ev-edit" data-id="${e.id}"><span class="tag" style="background:${ty.color}">${esc(ty.label)}</span><span class="nm">${esc(e.title)}</span>
+        <span class="it fm">${o.start !== o.end ? `${o.start.slice(5).replace('-', '/')}–${o.end.slice(5).replace('-', '/')}` : ''}${e.repeat === 'weekly' ? '（每週）' : ''}${(e.people || []).length ? '・' + e.people.map(esc).join('、') : ''}</span>
+        <span class="r">${e.images?.length ? '📎' + e.images.length : ''}</span></div>`; }).join('')}` : ''}
+    ${os.length ? `<div class="sec">訂單</div>${Object.keys(groups).sort((a, b) => a - b).map(sl => {
+      const g = groups[sl]; const ty = typeOf(g[0]);
+      return `<div class="tg"><i style="background:${ty.color}"></i>${esc(ty.label)} ${g.length}</div>${g.map(o =>
+        `<div class="drow ${o.status === 'done' ? 'dim' : ''}" data-act="edit" data-id="${o.id}"><span class="nm">${esc(o.name)}</span><span class="it">${esc(itemsBrief(o))}</span><span class="r">${flags(o)}</span></div>`).join('')}`;
+    }).join('')}` : ''}
+    ${!occ.length && !os.length ? '<div class="empty" style="padding:20px">這天沒有訂單和行程</div>' : ''}
+  </div>`;
+}
+
+/* ---------- 行程表單 ---------- */
+function openEvent(id, date){
+  const e = id ? S.events.find(x => x.id === id) : null;
+  const firstEv = namedSlots().find(([i]) => i >= 5)?.[0] ?? namedSlots()[0]?.[0] ?? 8;
+  draft = e ? clean(e) : { title: '', slot: firstEv, start: date || today(), end: date || today(), people: [], note: '', repeat: 'none', repeatUntil: '', images: [] };
+  draft._kind = 'event'; draft._err = '';
+  openModal(e ? '編輯行程' : '新增行程', () => {
+    const d = draft;
+    return `<div class="box"><div class="f"><label>標題 *</label><input type="text" data-k="title" value="${esc(d.title)}" placeholder="例如：茹休、拜訪紙器廠、新加坡高島屋設攤"></div>
+        <div class="f"><label>類別</label>${typeSeg('slot', d.slot, d.slotLabel)}</div></div>
+      <div class="box"><div class="two"><div class="f"><label>開始 *</label><input type="date" data-k="start" value="${esc(d.start)}"></div>
+        <div class="f"><label>結束</label><input type="date" data-k="end" value="${esc(d.end)}"></div></div>
+        <label class="chk"><input type="checkbox" data-k="_weekly" ${d.repeat === 'weekly' ? 'checked' : ''}>每週重複</label>
+        ${d.repeat === 'weekly' ? `<div class="f"><label>重複到（留空＝不限）</label><input type="date" data-k="repeatUntil" value="${esc(d.repeatUntil)}"></div>` : ''}</div>
+      <div class="box"><div class="bt">參與的人</div><div class="pchips">${S.config.staff.map(n => `<button class="${(d.people || []).includes(n) ? 'on' : ''}" data-act="ev-person" data-v="${esc(n)}">${esc(n)}</button>`).join('')}</div></div>
+      <div class="box"><div class="f"><textarea data-k="note" placeholder="備註">${esc(d.note)}</textarea></div>
+        <label class="upl"><input type="file" accept="image/*" multiple data-imgup>＋ 上傳圖片</label>
+        ${d._imgBusy ? '<span class="sum" style="margin-left:8px">處理中…</span>' : ''}
+        ${thumbsHtml([...(d.images || []).map(id => ({ id, key: 'old:' + id })), ...(d._newImages || []).map((data, i) => ({ data, key: 'new:' + i }))], true)}
+        ${d.updatedBy ? `<div class="meta">最後更新 ${esc(d.updatedBy)} ${fmtTime(d.updatedAt)}</div>` : ''}</div>
+      ${d._err ? `<div class="err">${esc(d._err)}</div>` : ''}`;
+  }, `${e ? `<button class="btn danger" data-act="ev-del">刪除</button>` : ''}<button class="btn" data-act="close">關閉</button><button class="btn pri" data-act="ev-save">儲存</button>`);
+}
+async function commitImages(d, now){
+  const newIds = [];
+  for(const img of d._newImages || []) newIds.push(await DB.add('images', { data: img, by: S.me, at: now }));
+  newIds.forEach((id, i) => imgCache[id] = Promise.resolve(d._newImages[i]));
+  for(const id of d._removedImages || []) await DB.remove('images', id).catch(() => {});
+  return [...(d.images || []), ...newIds];
+}
+async function saveEvent(){
+  const d = draft;
+  if(!d.title.trim()){ d._err = '請填標題'; return rerenderModal(); }
+  if(!d.start){ d._err = '請填開始日期'; return rerenderModal(); }
+  if(d.end && d.end < d.start){ d._err = '結束日期不能早於開始日期'; return rerenderModal(); }
+  const now = Date.now();
+  $('[data-act=ev-save]').disabled = true;
+  try{
+    const data = { title: d.title.trim(), slot: d.slot, slotLabel: cats()[d.slot] || d.slotLabel || '', start: d.start, end: d.end || d.start,
+      people: d.people || [], note: d.note || '', repeat: d.repeat === 'weekly' ? 'weekly' : 'none', repeatUntil: d.repeat === 'weekly' ? (d.repeatUntil || '') : '',
+      images: await commitImages(d, now), updatedBy: S.me, updatedAt: now, createdBy: d.createdBy || S.me, createdAt: d.createdAt || now };
+    d.id ? await DB.put('events', d.id, data) : await DB.add('events', data);
+    closeModal(); toast('已儲存');
+  }catch(e){ console.error(e); d._err = '儲存失敗：' + (e.code || e.message); rerenderModal(); }
+}
 
 /* ---------- ① 內場 ---------- */
 function viewKitchen(){
@@ -594,10 +842,12 @@ function viewField(){
   const t = today(), tm = addDays(t, 1);
   const live = S.orders.filter(o => o.status !== 'cancel' && o.status !== 'done');
   const amTomorrow = live.filter(o => o.shipDate === tm && o.slot === 'am' && o.method !== 'delivery');
-  const unpaidToday = live.filter(o => o.shipDate === t && !o.paid);
+  const unpaidToday = live.filter(o => o.shipDate === t && !isPaid(o));
+  const refunds = S.orders.filter(o => o.status !== 'cancel' && payState(o).kind === 'refund');
   const alerts = [];
   if(amTomorrow.length) alerts.push(`<div class="alert amber"><b>明天早上取貨，今天先打包好</b><ul>${amTomorrow.map(o => `<li>${esc(o.name)}　${fmtPhone(o.phone)}</li>`).join('')}</ul></div>`);
-  if(unpaidToday.length) alerts.push(`<div class="alert red"><b>今天交付、尚未付款，記得收款</b><ul>${unpaidToday.map(o => `<li>${esc(o.name)}　${fmtPhone(o.phone)}</li>`).join('')}</ul></div>`);
+  if(unpaidToday.length) alerts.push(`<div class="alert red"><b>今天交付、尚未付清，記得收款</b><ul>${unpaidToday.map(o => `<li>${esc(o.name)}　${fmtPhone(o.phone)}　${esc(payState(o).text)}</li>`).join('')}</ul></div>`);
+  if(refunds.length) alerts.push(`<div class="alert amber"><b>待退款</b><ul>${refunds.map(o => `<li>${esc(o.name)}　${fmtPhone(o.phone)}　<b style="display:inline;color:#c26a00">${esc(payState(o).text)}</b></li>`).join('')}</ul></div>`);
 
   const F = { open: ['未完成', o => o.status === 'todo' || o.status === 'ready'], todo: ['待製作', o => o.status === 'todo'],
               ready: ['已備妥', o => o.status === 'ready'], done: ['已完成', o => o.status === 'done'], all: ['全部', o => o.status !== 'cancel'] };
@@ -617,10 +867,10 @@ function linesHtml(o){
     : `<div>${esc(l.productName)}｜${esc(packLabel(l.packName, l.packSize, l.unit))} × ${l.qty}</div>`).join('');
 }
 function orderCard(o, opts = {}){
-  const t = TYPES[o.type] || TYPES.regular;
+  const t = typeOf(o), ps = payState(o);
   const b = [];
-  b.push(`<span class="b type">${t.label}</span>`);
-  b.push(o.paid ? `<span class="b ok">已付款${o.payMethod ? '・' + esc(o.payMethod) : ''}</span>` : `<span class="b red">未付款</span>`);
+  b.push(`<span class="b type" style="background:${t.color};color:#fff">${esc(t.label)}</span>`);
+  if(ps.kind !== 'na') b.push(`<span class="b ${ps.kind === 'ok' ? 'ok' : ps.kind === 'refund' ? 'orange' : 'red'}">${esc(ps.text)}</span>`);
   if(o.source) b.push(`<span class="b">${esc(o.source)}</span>`);
   b.push(`<span class="b">${o.method === 'delivery' ? '宅配' : '自取'}</span>`);
   if(o.slot === 'am' && o.method !== 'delivery') b.push(`<span class="b amber">早上取貨</span>`);
@@ -632,7 +882,8 @@ function orderCard(o, opts = {}){
   const needs = [];
   if(o.card?.need) needs.push(`<div><b>小卡：</b>${esc(o.card.text || '（未填內容）')}</div>`);
   if(o.receipt?.need) needs.push(`<div><b>收據：</b>${o.receipt.taxId ? '統編 ' + esc(o.receipt.taxId) : '不需統編'}</div>`);
-  if(o.paid && o.payMethod === '匯款/轉帳') needs.push(`<div><b>匯款：</b>${esc(o.transferDate || '')} 末五碼 ${esc(o.last5 || '')}</div>`);
+  if(numOr(o.amount) > 0 || ps.pays.length) needs.push(`<div><b>收款：</b>${numOr(o.amount) > 0 ? '訂單 ' + money(o.amount) + '｜' : ''}${ps.pays.map(p =>
+    `${p.refund ? '退款' : ''}${esc(p.date ? p.date.slice(5).replace('-', '/') : '')} ${esc(p.method)}${payVal(p) != null ? ' ' + money(Math.abs(payVal(p))) : ''}${p.last5 ? ' 末五碼' + esc(p.last5) : ''}`).join('；') || '尚無收款'}</div>`);
   if(o.note) needs.push(`<div><b>備註：</b>${esc(o.note)}</div>`);
   const imgs = (o.images || []).map(id => ({ id }));
   const acts = [];
@@ -644,7 +895,7 @@ function orderCard(o, opts = {}){
   if(o.status === 'done') acts.push(`<button class="btn sm" data-act="status" data-id="${o.id}" data-v="ready">復原</button>`);
   acts.push(`<button class="btn sm" data-act="edit" data-id="${o.id}">編輯</button>`);
   acts.push(`<button class="btn sm danger" data-act="del-card" data-id="${o.id}" style="margin-left:auto">刪除</button>`);
-  return `<div class="oc ${t.cls} st-${o.status}">
+  return `<div class="oc st-${o.status}" style="background:${tint(t.color)};border-color:${t.color}">
     <div class="l1"><span class="nm">${esc(o.name)}</span><a class="ph" href="tel:${esc(o.phone)}">${fmtPhone(o.phone)}</a>
       ${opts.showDate ? `<span class="b">${fmtDate(o.shipDate)}</span>` : ''}</div>
     <div class="badges">${b.join('')}</div>
@@ -682,6 +933,11 @@ function viewSettings(){
   const c = S.config;
   const prods = [...S.products].sort(byOrder), packs = [...S.packs].sort(byOrder), boxes = [...S.boxes].sort((a, b) => String(a.name).localeCompare(String(b.name)));
   return `
+  <div class="box"><div class="bt">類型與顏色（訂單和行程共用）</div>
+    ${cats().map((l, i) => `<div class="catrow"><i style="background:${SLOT_COLORS[i]}"></i><input id="cat${i}" value="${esc(l)}" placeholder="（未使用）"></div>`).join('')}
+    <button class="btn block" data-act="cats-save">儲存類型名稱</button>
+    <div class="t2" style="margin-top:6px;font-size:13px;color:var(--muted)">清空名稱就等於刪除這個類型，顏色會保留給新類型使用；已登記的訂單和行程會保留原本的名稱。</div></div>
+
   <div class="box"><div class="bt">夥伴名單</div>
     <div>${c.staff.map(n => `<span class="tag">${esc(n)}<button data-act="staff-del" data-v="${esc(n)}">×</button></span>`).join('')}</div>
     <div class="inl"><input id="newStaff" placeholder="新增夥伴"><button class="btn" data-act="staff-add">新增</button></div></div>
@@ -718,7 +974,7 @@ function viewSettings(){
 
   <div class="box"><div class="bt">這支手機</div>
     <div class="set-row"><div class="t1">目前使用者：${esc(S.me)}</div><button class="btn sm" data-act="who">切換</button></div></div>
-  <p class="sum" style="text-align:center">半吊子 訂單系統 v1.2${DEMO ? '・試用版（資料只存在這台裝置）' : ''}</p>`;
+  <p class="sum" style="text-align:center">半吊子 訂單系統 v1.3${DEMO ? '・試用版（資料只存在這台裝置）' : ''}</p>`;
 }
 function mapTargetText(m){
   if(m.kind === 'box') return '禮盒｜' + (S.bm[m.boxId]?.name || '（已刪除）');
@@ -809,12 +1065,16 @@ const thumbsHtml = (ids, removable) => ids.length ? `<div class="thumbs">${ids.m
    ============================================================ */
 let draft = null;
 function blankOrder(){
-  return { type: 'regular', source: S.config.sources[0] || '', name: '', phone: '', shipDate: addDays(today(), 1),
+  return { typeSlot: namedSlots()[0]?.[0] ?? 0, source: S.config.sources[0] || '', name: '', phone: '', shipDate: addDays(today(), 1),
     method: 'pickup', slot: 'pm', lines: [], card: { need: false, text: '' }, receipt: { need: false, taxId: '' },
-    paid: false, payMethod: '', transferDate: '', last5: '', status: 'todo', note: '' };
+    amount: '', payments: [], status: 'todo', note: '' };
 }
-function openOrderForm(o){
+function openOrderForm(o, date){
   draft = o ? clean(o) : blankOrder();
+  if(!o && date) draft.shipDate = date;
+  draft.typeSlot = typeOf(draft).slot;
+  draft.payments = clean(paysOf(draft));
+  draft.amount = numOr(draft.amount) ?? '';
   draft._err = '';
   const seg = (path, opts, cur, clsFn) => `<div class="seg">${opts.map(([v, l]) =>
     `<button type="button" class="${String(cur) === String(v) ? 'on' : ''} ${clsFn ? clsFn(v) : ''}" data-act="set" data-path="${path}" data-v="${esc(v)}">${esc(l)}</button>`).join('')}</div>`;
@@ -835,7 +1095,7 @@ function openOrderForm(o){
         ${units ? `<div class="hint">共 ${units} ${esc(p.unit)}</div>` : ''}</div>`;
     }).join('');
     return `
-      <div class="box"><div class="bt">訂單類型</div>${seg('type', Object.entries(TYPES).map(([k, v]) => [k, v.label]), d.type, v => TYPES[v].cls)}</div>
+      <div class="box"><div class="bt">訂單類型</div>${typeSeg('typeSlot', d.typeSlot, d.typeLabel)}</div>
       <div class="box"><div class="bt">客人</div>
         <div class="two"><div class="f"><label>姓名 *</label><input type="text" data-k="name" value="${esc(d.name)}"></div>
         <div class="f"><label>電話 *</label><input type="tel" inputmode="tel" data-k="phone" value="${esc(d.phone)}"></div></div>
@@ -851,11 +1111,17 @@ function openOrderForm(o){
         ${d.card.need ? `<div class="f"><textarea data-k="card.text" placeholder="小卡內容">${esc(d.card.text)}</textarea></div>` : ''}
         <label class="chk"><input type="checkbox" data-k="receipt.need" ${d.receipt.need ? 'checked' : ''}>需要收據</label>
         ${d.receipt.need ? `<div class="f"><input type="text" inputmode="numeric" data-k="receipt.taxId" placeholder="統編（不需要可留空）" value="${esc(d.receipt.taxId)}"></div>` : ''}</div>
-      <div class="box"><div class="bt">付款</div>
-        ${seg('paid', [['false', '未付款'], ['true', '已付款']], d.paid)}
-        ${d.paid ? `<div class="f" style="margin-top:10px"><label>付款方式 *</label>${seg('payMethod', PAY_METHODS.map(m => [m, m]), d.payMethod)}</div>
-          ${d.payMethod === '匯款/轉帳' ? `<div class="two"><div class="f"><label>匯款日期 *</label><input type="date" data-k="transferDate" value="${esc(d.transferDate)}"></div>
-            <div class="f"><label>帳號末五碼 *</label><input type="text" inputmode="numeric" maxlength="5" data-k="last5" value="${esc(d.last5)}"></div></div>` : ''}` : ''}</div>
+      <div class="box"><div class="bt">金額與收款</div>
+        <div class="f"><label>訂單金額（選填）</label><input type="number" inputmode="numeric" data-k="amount" value="${esc(d.amount)}" placeholder="不追蹤金額可留空"></div>
+        ${d.payments.map((p, i) => `<div class="line"${p.refund ? ' style="background:#fff1e0"' : ''}><div class="hint" style="margin:0 0 4px">${p.refund ? '退款' : '收款'} ${i + 1}</div>
+          <div class="lr pay">
+          <select data-pay="${i}" data-pf="method"><option value="">${p.refund ? '退款方式' : '收款方式'}</option>${PAY_METHODS.map(m => `<option ${p.method === m ? 'selected' : ''}>${m}</option>`).join('')}</select>
+          <input type="number" inputmode="numeric" data-pay="${i}" data-pf="amount" value="${esc(p.amount)}" placeholder="金額">
+          <button class="x" data-act="payrow-del" data-v="${i}">×</button></div>
+          <div class="lr2"><input type="date" data-pay="${i}" data-pf="date" value="${esc(p.date)}">
+          ${p.method === '匯款/轉帳' ? `<input type="text" inputmode="numeric" maxlength="5" data-pay="${i}" data-pf="last5" value="${esc(p.last5)}" placeholder="帳號末五碼">` : '<span></span>'}</div></div>`).join('')}
+        <div class="acts"><button class="btn sm" data-act="payrow-add" data-v="in">＋ 收款</button><button class="btn sm" data-act="payrow-add" data-v="refund">＋ 退款</button></div>
+        ${(() => { const ps = payState(d); return `<div class="paysum">已收 ${money(ps.received)}${numOr(d.amount) > 0 ? '／訂單 ' + money(d.amount) : ''}　<b style="color:${ps.kind === 'ok' ? '#2f6b33' : ps.kind === 'refund' ? '#c26a00' : 'var(--red)'}">${esc(ps.text)}</b></div>`; })()}</div>
       <div class="box"><div class="bt">狀態與備註</div>
         ${seg('status', [['todo', '待製作'], ['ready', '已備妥'], ['done', d.method === 'delivery' ? '已出貨' : '已取貨'], ['cancel', '取消']], d.status)}
         <div class="f" style="margin-top:10px"><textarea data-k="note" placeholder="備註">${esc(d.note)}</textarea></div>
@@ -866,32 +1132,41 @@ function openOrderForm(o){
       ${d._err ? `<div class="err">${esc(d._err)}</div>` : ''}`;
   }, `${o ? `<button class="btn danger" data-act="del-order">刪除訂單</button>` : ''}<button class="btn" data-act="close">關閉</button><button class="btn pri" data-act="save-order">儲存</button>`);
 }
+function typeSeg(path, cur, curLabel){
+  const named = namedSlots();
+  if(cur != null && !named.some(([i]) => i === cur)) named.unshift([cur, curLabel || '（已移除的類型）']);
+  return `<div class="seg">${named.map(([i, l]) => `<button type="button" class="${cur === i ? 'on ty' : ''}" style="${cur === i ? `background:${SLOT_COLORS[i]};border-color:${SLOT_COLORS[i]}` : `border-color:${SLOT_COLORS[i]};color:${SLOT_COLORS[i]}`}" data-act="set" data-path="${path}" data-v="${i}">${esc(l)}</button>`).join('')}</div>`;
+}
 function setPath(obj, path, val){ const ks = path.split('.'); let o = obj; ks.slice(0, -1).forEach(k => o = o[k] ||= {}); o[ks.at(-1)] = val; }
 
 async function saveOrder(){
   const d = draft;
   const phone = digits(d.phone);
-  const err = !d.name.trim() ? '請填姓名' : !phone ? '請填電話' : !d.shipDate ? '請填出貨日' : !d.source ? '請選訂購來源'
+  const label = cats()[d.typeSlot] || d.typeLabel || '';
+  const err = !d.name.trim() ? '請填姓名' : !phone && !/備貨|公關/.test(label) ? '請填電話' : !d.shipDate ? '請填出貨日' : !d.source ? '請選訂購來源'
     : !d.lines.length ? '請至少加一個品項' : d.lines.some(l => l.kind === 'box' ? !l.boxId && !(l.items || []).length : !l.productId || !l.packId) ? '有品項還沒選好'
-    : d.lines.some(l => !(Number(l.qty) > 0)) ? '數量要大於 0' : d.paid && !d.payMethod ? '請選付款方式'
-    : d.paid && d.payMethod === '匯款/轉帳' && (!d.transferDate || !/^\d{5}$/.test(d.last5 || '')) ? '匯款請填日期和帳號末五碼（5 碼數字）' : '';
+    : d.lines.some(l => !(Number(l.qty) > 0)) ? '數量要大於 0'
+    : d.amount !== '' && numOr(d.amount) == null ? '訂單金額要是數字'
+    : d.payments.some(p => !p.method) ? '每筆收款／退款都要選方式'
+    : d.payments.some(p => p.amount !== '' && numOr(p.amount) == null) ? '收款金額要是數字'
+    : d.payments.some(p => p.method === '匯款/轉帳' && (!p.date || !/^\d{5}$/.test(p.last5 || ''))) ? '匯款請填日期和帳號末五碼（5 碼數字）' : '';
   if(err){ d._err = err; rerenderModal(); return; }
   const lines = d.lines.map(l => l.kind === 'box'
     ? { kind: 'box', boxId: l.boxId, boxName: S.bm[l.boxId]?.name || l.boxName || '', qty: Number(l.qty), items: l._fresh || !l.items ? snapBox(l.boxId) : l.items }
     : { kind: 'item', ...snapItem(l.productId, l.packId, l.qty) });
   const now = Date.now();
   const data = { ...d, phone, name: d.name.trim(), lines, updatedBy: S.me, updatedAt: now };
-  if(!data.paid){ data.payMethod = ''; data.transferDate = ''; data.last5 = ''; }
-  if(data.payMethod !== '匯款/轉帳'){ data.transferDate = ''; data.last5 = ''; }
+  data.typeLabel = label; delete data.type;
+  data.amount = numOr(d.amount);
+  data.payments = d.payments.map(p => ({ date: p.date || '', method: p.method, amount: numOr(p.amount) ?? '', last5: p.method === '匯款/轉帳' ? p.last5 : '', refund: !!p.refund }));
+  // 舊欄位保留同步，給其他功能判斷用
+  const ps = payState(data), lastIn = [...data.payments].reverse().find(p => !p.refund), lastTr = [...data.payments].reverse().find(p => p.method === '匯款/轉帳');
+  data.paid = ps.paid; data.payMethod = lastIn?.method || ''; data.transferDate = lastTr?.date || ''; data.last5 = lastTr?.last5 || '';
   if(data.method === 'delivery') data.slot = 'pm';
   delete data._err; delete data.id; delete data._newImages; delete data._imgBusy; delete data._removedImages;
   $('[data-act=save-order]').disabled = true;
   try{
-    const newIds = [];
-    for(const img of d._newImages || []) newIds.push(await DB.add('images', { data: img, by: S.me, at: now }));
-    newIds.forEach((id, i) => imgCache[id] = Promise.resolve(d._newImages[i]));
-    data.images = [...(d.images || []), ...newIds];
-    for(const id of d._removedImages || []) await DB.remove('images', id).catch(() => {});
+    data.images = await commitImages(d, now);
     if(d.id){
       data.log = [...(d.log || []), { by: S.me, at: now, act: '修改' }].slice(-30);
       await DB.put('orders', d.id, data);
@@ -905,11 +1180,11 @@ async function saveOrder(){
 
 async function changeStatus(id, st, extra = {}){
   const o = S.orders.find(x => x.id === id); if(!o) return;
-  if(st === 'done' && !extra._confirmed) return o.paid ? proceedDone(o, {}) : askPayment(o);
+  if(st === 'done' && !extra._confirmed) return isPaid(o) ? proceedDone(o, {}) : askPayment(o);
   delete extra._confirmed;
   if(st !== 'done' && o.status === 'done' && o.posShip) toast('提醒：已送到 POS 的庫存與銷售不會自動還原，請到 POS 處理', 4000);
   const now = Date.now();
-  const act = '狀態：' + (st === 'done' ? (o.method === 'delivery' ? '已出貨' : '已取貨') : STATUS[st]) + (extra.paid ? `（收款：${extra.payMethod}）` : '');
+  const act = '狀態：' + (st === 'done' ? (o.method === 'delivery' ? '已出貨' : '已取貨') : STATUS[st]) + (extra.payments ? `（收款：${extra.payMethod}）` : '');
   try{
     await DB.patch('orders', id, { status: st, ...extra, updatedBy: S.me, updatedAt: now, log: [...(o.log || []), { by: S.me, at: now, act }].slice(-30) });
     toast(act.replace('狀態：', ''));
@@ -993,7 +1268,7 @@ let payDraft = null;
 function askPayment(o){
   payDraft = { id: o.id, method: '', transferDate: today(), last5: '', err: '' };
   openModal('這筆訂單尚未付款', () => `
-    <div class="alert red"><b>${esc(o.name)}　${fmtPhone(o.phone)}</b>交付前請向客人收款，選擇收款方式：</div>
+    <div class="alert red"><b>${esc(o.name)}　${fmtPhone(o.phone)}　${esc(payState(o).text)}</b>交付前請向客人收款，選擇收款方式：</div>
     <div class="seg">${PAY_METHODS.filter(m => m !== '官網付款').map(m => `<button class="${payDraft.method === m ? 'on' : ''}" data-act="pay-m" data-v="${m}">${m}</button>`).join('')}</div>
     ${payDraft.method === '匯款/轉帳' ? `<div class="two" style="margin-top:10px"><div class="f"><label>匯款日期</label><input type="date" data-pk="transferDate" value="${payDraft.transferDate}"></div>
       <div class="f"><label>帳號末五碼</label><input type="text" inputmode="numeric" maxlength="5" data-pk="last5" value="${esc(payDraft.last5)}"></div></div>` : ''}
@@ -1167,9 +1442,10 @@ async function runImport(){
         : { kind: 'item', ...snapItem(m.productId, m.packId, it.qty) };
     });
     items.push({ col: 'orders', id: r.docId, data: {
-      type: 'regular', source: '官網', name: r.name, phone: r.phone, shipDate: r.shipDate, method: r.method, slot: r.am && r.method === 'pickup' ? 'am' : 'pm',
+      typeSlot: 0, typeLabel: cats()[0] || '常態出貨', source: '官網', name: r.name, phone: r.phone, shipDate: r.shipDate, method: r.method, slot: r.am && r.method === 'pickup' ? 'am' : 'pm',
       lines, card: { need: false, text: '' }, receipt: { need: !!r.taxId, taxId: r.taxId || '' },
-      paid: r.paid, payMethod: r.paid ? '官網付款' : '', transferDate: '', last5: '', status: 'todo', note: r.note, cyberId: r.cyberId,
+      paid: r.paid, payMethod: r.paid ? '官網付款' : '', transferDate: '', last5: '', amount: null,
+      payments: r.paid ? [{ date: '', method: '官網付款', amount: '', last5: '', refund: false }] : [], status: 'todo', note: r.note, cyberId: r.cyberId,
       createdBy: S.me, createdAt: now, updatedBy: S.me, updatedAt: now, log: [{ by: S.me, at: now, act: '官網匯入' }] } });
   }
   try{
@@ -1190,10 +1466,10 @@ function exportExcel(){
     ? `${l.boxName}×${l.qty}【${(l.items || []).map(i => `${i.productName}${i.packName}×${i.qty}`).join('、')}】`
     : `${l.productName}${l.packName}×${l.qty}`).join('；');
   const rows = os.map(o => ({
-    出貨日: o.shipDate, 類型: TYPES[o.type]?.label, 狀態: statusText(o), 姓名: o.name, 電話: o.phone, 來源: o.source,
+    出貨日: o.shipDate, 類型: typeOf(o).label, 狀態: statusText(o), 姓名: o.name, 電話: o.phone, 來源: o.source,
     取貨方式: o.method === 'delivery' ? '宅配' : '自取', 時段: o.slot === 'am' ? '早上' : '下午', 品項: lineText(o),
     小卡: o.card?.need ? (o.card.text || '需要') : '', 收據統編: o.receipt?.need ? (o.receipt.taxId || '需要') : '',
-    付款: o.paid ? '已付款' : '未付款', 付款方式: o.payMethod || '', 匯款日期: o.transferDate || '', 末五碼: o.last5 || '',
+    付款: payState(o).text, 訂單金額: numOr(o.amount) ?? '', 已收: payState(o).received || '', 付款方式: o.payMethod || '', 匯款日期: o.transferDate || '', 末五碼: o.last5 || '',
     官網編號: o.cyberId || '', 備註: o.note || '', 建立: o.createdBy || '', 最後修改: `${o.updatedBy || ''} ${fmtTime(o.updatedAt)}` }));
   const agg = aggregate(os.filter(o => o.status === 'todo'));
   const k = agg.map(a => ({ 系列: a.series, 品項: a.name, 數量: a.units, 單位: a.unit, 烘烤: a.batch?.size ? `${Math.ceil(a.units / a.batch.size)}${a.batch.label}` : '' }));
@@ -1224,6 +1500,27 @@ document.addEventListener('click', async e => {
     case 'ffilter': S.fieldFilter = v; return render();
     case 'past': S.ordersPast = !S.ordersPast; return render();
     case 'new': return openOrderForm(null);
+    case 'new-on': return openOrderForm(null, v);
+    case 'cal-day': S.calSel = v; return render();
+    case 'cal-mv': { const d = parseYmd(S.calMonth); d.setMonth(d.getMonth() + Number(v)); S.calMonth = ymd(d); subscribeOrders(); return render(); }
+    case 'cal-today': S.calMonth = today().slice(0, 8) + '01'; S.calSel = today(); subscribeOrders(); return render();
+    case 'ev-new': return openEvent(null, v);
+    case 'ev-edit': e.stopPropagation(); return openEvent(id);
+    case 'ev-save': return saveEvent();
+    case 'ev-person': { const ps = draft.people ||= []; const i = ps.indexOf(v); i < 0 ? ps.push(v) : ps.splice(i, 1); return rerenderModal(); }
+    case 'ev-del': {
+      if(!confirmInline(el, '再按一次確認刪除')) return;
+      const d = draft;
+      try{ await DB.remove('events', d.id); for(const im of d.images || []) await DB.remove('images', im).catch(() => {}); closeModal(); toast('已刪除行程'); }
+      catch(err){ toast('刪除失敗：' + (err.code || err.message)); }
+      return;
+    }
+    case 'cats-save': {
+      const next = Array.from({ length: 10 }, (_, i) => ($('#cat' + i)?.value || '').trim());
+      if(!next.some(Boolean)) return toast('至少要保留一個類型');
+      try{ await DB.patch('config', 'main', { cats: next }); toast('已儲存類型'); }catch(err){ toast('儲存失敗：' + (err.code || err.message)); }
+      return;
+    }
     case 'edit': { const o = S.orders.find(x => x.id === id); if(o) openOrderForm(o); return; }
     case 'status': return changeStatus(id, v);
     case 'import': return openImport();
@@ -1231,15 +1528,16 @@ document.addEventListener('click', async e => {
     case 'history': return showHistory(v);
     case 'close': return closeModal();
     case 'set': {
-      let val = v; if(el.dataset.path === 'paid') val = v === 'true';
+      let val = v; if(['typeSlot', 'slot'].includes(el.dataset.path)) val = Number(v);
       setPath(draft, el.dataset.path, val);
-      if(el.dataset.path === 'paid' && val && !draft.payMethod) draft.payMethod = '';
       return rerenderModal();
     }
     case 'line-add':
       draft.lines.push(v === 'box' ? { kind: 'box', boxId: '', qty: 1, _fresh: true } : { kind: 'item', productId: '', packId: defaultPack(), qty: 1 });
       return rerenderModal();
     case 'line-del': draft.lines.splice(+v, 1); return rerenderModal();
+    case 'payrow-add': draft.payments.push({ date: today(), method: '', amount: '', last5: '', refund: v === 'refund' }); return rerenderModal();
+    case 'payrow-del': draft.payments.splice(+v, 1); return rerenderModal();
     case 'save-order': return saveOrder();
     case 'ship-go': return sendShip();
     case 'ship-skip': { const d = shipDraft; closeModal(); return changeStatus(d.id, 'done', { ...d.extra, _confirmed: true }); }
@@ -1269,7 +1567,10 @@ document.addEventListener('click', async e => {
       if(p.method === '匯款/轉帳' && !/^\d{5}$/.test(p.last5)){ p.err = '請填帳號末五碼'; return rerenderModal(); }
       closeModal();
       const o = S.orders.find(x => x.id === p.id);
-      return o && proceedDone(o, { paid: true, payMethod: p.method, transferDate: p.method === '匯款/轉帳' ? p.transferDate : '', last5: p.method === '匯款/轉帳' ? p.last5 : '' });
+      if(!o) return;
+      const st = payState(o);
+      const entry = { date: p.method === '匯款/轉帳' ? p.transferDate : today(), method: p.method, amount: st.kind === 'owe' ? st.due : '', last5: p.method === '匯款/轉帳' ? p.last5 : '', refund: false };
+      return proceedDone(o, { payments: [...st.pays, entry], paid: true, payMethod: p.method, transferDate: entry.method === '匯款/轉帳' ? entry.date : (o.transferDate || ''), last5: entry.method === '匯款/轉帳' ? entry.last5 : (o.last5 || '') });
     }
     /* settings */
     case 'staff-add': { const n = $('#newStaff').value.trim(); if(!n || S.config.staff.includes(n)) return; await DB.patch('config', 'main', { staff: [...S.config.staff, n] }); return; }
@@ -1333,9 +1634,10 @@ async function onField(e){
     draft._imgBusy = false; rerenderModal(); return;
   }
   const val = el.type === 'checkbox' ? el.checked : el.value;
+  if(el.dataset.k === '_weekly' && draft){ draft.repeat = val ? 'weekly' : 'none'; return rerenderModal(); }
   if(el.dataset.k && draft){
     setPath(draft, el.dataset.k, val);
-    if(el.type === 'checkbox') rerenderModal();
+    if(el.type === 'checkbox' || (el.dataset.k === 'amount' && e.type === 'change')) rerenderModal();
     return;
   }
   if(el.dataset.line != null && draft){
@@ -1357,6 +1659,11 @@ async function onField(e){
     return;
   }
   if(el.dataset.pk && payDraft){ payDraft[el.dataset.pk] = val; return; }
+  if(el.dataset.pay != null && draft?.payments){
+    draft.payments[+el.dataset.pay][el.dataset.pf] = val;
+    if(e.type === 'change') rerenderModal();
+    return;
+  }
   if(el.dataset.ship != null && shipDraft){
     const i = +el.dataset.ship, f = el.dataset.sf;
     if(f === 'revenue') shipDraft.revenue = val;
@@ -1390,12 +1697,23 @@ function demoOrders(products){
   const list = [
     O('羅心英', '0958797797', 0, { slot: 'am', paid: false, payMethod: '', lines: [it('p01', 'k1', 6), it('p05', 'k1', 1), it('p06', 'k1', 1), it('p09', 'k1', 2)] }),
     O('張立佑', '0912345678', 1, { type: 'custom', source: '電話', card: { need: true, text: '祝 生日快樂！' }, payMethod: '匯款/轉帳', transferDate: t, last5: '12345',
+      amount: 5000, payments: [{ date: t, method: '匯款/轉帳', amount: 5200, last5: '12345', refund: false }],
       lines: [box('客製化禮盒1', 10, [it('p01', 'k4', 1), it('p05', 'k5', 1), it('p12', 'k6', 1)])] }),
-    O('陳品瑜', '0921393409', 1, { source: 'IG', paid: false, payMethod: '', receipt: { need: true, taxId: '89839297' }, lines: [it('p01', 'k1', 2), it('p10', 'k1', 1)] }),
+    O('陳品瑜', '0921393409', 1, { source: 'IG', paid: false, payMethod: '', amount: 690, payments: [{ date: t, method: '現金', amount: 200, last5: '', refund: false }], receipt: { need: true, taxId: '89839297' }, lines: [it('p01', 'k1', 2), it('p10', 'k1', 1)] }),
     O('某某咖啡', '035551234', 2, { type: 'pr', source: '其他', note: '合作夥伴試吃', lines: [it('p02', 'k5', 10), it('p08', 'k5', 10)] }),
-    O('邱宇璇', '0919103902', 2, { method: 'delivery', source: '官網', payMethod: '官網付款', cyberId: '#1929', lines: [it('p01', 'k1', 3), it('p13', 'k1', 1)] })
+    O('邱宇璇', '0919103902', 2, { method: 'delivery', source: '官網', payMethod: '官網付款', cyberId: '#1929', lines: [it('p01', 'k1', 3), it('p13', 'k1', 1)] }),
+    O('鄭守倫', '0933111222', 3, { typeSlot: 4, typeLabel: '客製喜餅', source: '電話', amount: 12000, payments: [{ date: t, method: '匯款/轉帳', amount: 6000, last5: '55678', refund: false }],
+      lines: [box('喜餅A組', 60, [it('p01', 'k5', 1), it('p09', 'k5', 1)])] }),
+    O('石垣島擺攤', '', 3, { typeSlot: 3, typeLabel: '活動備貨', source: '其他', paid: false, payMethod: '', lines: [it('p01', 'k1', 30), it('p09', 'k1', 20), it('p05', 'k1', 20)] })
   ];
-  return list.map((d, i) => ({ col: 'orders', id: 'demo' + i, data: d }));
+  const E = (id, title, slot, s, e, extra = {}) => ({ col: 'events', id, data: { title, slot, slotLabel: DEFAULT_CATS[slot], start: addDays(t, s), end: addDays(t, e), people: [], note: '', repeat: 'none', repeatUntil: '', images: [], createdBy: 'KS', createdAt: now, updatedBy: 'KS', updatedAt: now, ...extra } });
+  const sun = addDays(t, -parseYmd(t).getDay());
+  return [...list.map((d, i) => ({ col: 'orders', id: 'demo' + i, data: d })),
+    E('ev1', '茹休', 5, -1, 2, { people: ['YR'] }),
+    E('ev2', '石垣島活動：北投溫泉季', 7, 3, 5, { people: ['KS', 'YH'] }),
+    E('ev3', '拜訪紙器廠', 6, 6, 6, { people: ['KS'] }),
+    { col: 'events', id: 'ev4', data: { title: '店休', slot: 8, slotLabel: '店務', start: sun, end: sun, people: [], note: '', repeat: 'weekly', repeatUntil: '', images: [], createdBy: 'KS', createdAt: now } },
+    E('ev5', '新加坡高島屋設攤', 7, 12, 18, { people: ['KS', 'YH', 'CT'] })];
 }
 
 boot();
